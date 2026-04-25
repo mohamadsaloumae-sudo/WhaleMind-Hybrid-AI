@@ -1,13 +1,15 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/engine.py", "use": "@vercel/python" },
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "*.js", "use": "@vercel/static" }
+    {
+      "src": "api/engine.py",
+      "use": "@vercel/python"
+    }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "api/engine.py" },
-    { "src": "/", "dest": "index.html" },
-    { "src": "/(.*)", "dest": "/$1" }
+    {
+      "src": "/api/(.*)",
+      "dest": "api/engine.py"
+    }
   ]
 }
