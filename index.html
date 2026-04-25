@@ -3,41 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhaleMind AI | Global Terminal</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://s3.tradingview.com/tv.js"></script>
+    <title>WhaleMind AI</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0e11;
+            --panel-bg: #1e2329;
+            --accent: #fcd535; /* لون بايننس */
+            --neon: #00d2ff;
+            --text-main: #eaecef;
+            --text-dim: #848e9c;
+            --border: #2b3139;
+            --green: #0ecb81;
+            --red: #f6465d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden; /* لمنع السكرول */
+        }
+
+        /* الهيدر العلوي */
+        .main-header {
+            height: 50px;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; background: var(--bg-color); z-index: 100;
+        }
+        .logo { font-size: 18px; font-weight: bold; color: var(--neon); }
+        .logo span { color: #fff; }
+        .status-icon { font-size: 14px; color: var(--green); }
+
+        /* منطقة المحتوى */
+        .viewport {
+            height: calc(100vh - 115px);
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        /* ستايل المربعات الميزات */
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .feat-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .feat-icon {
+            width: 45px; height: 45px;
+            background: #2b3139;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: var(--accent);
+            margin-bottom: 8px;
+        }
+        .feat-item span { font-size: 11px; color: var(--text-dim); }
+
+        /* شريط التنقل السفلي - المعيار العالمي */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; height: 65px;
+            background-color: var(--panel-bg);
+            border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 1000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: var(--text-dim); cursor: pointer; flex: 1; text-decoration: none;
+        }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+        .nav-item span { font-size: 11px; }
+        .nav-item.active { color: var(--accent); }
+
+        /* الكروت والقوائم */
+        .card { background: var(--panel-bg); border-radius: 12px; padding: 15px; border: 1px solid var(--border); }
+        .promo-banner { background: linear-gradient(45deg, #1e2329, #2b3139); margin-bottom: 15px; border: 1px solid var(--neon); }
+        
+        .coin-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-top: 10px; cursor: pointer; border-bottom: 1px solid #1e2329;}
+        .coin-name { font-weight: bold; font-size: 15px; }
+        .coin-symbol { color: var(--text-dim); font-size: 12px; }
+        .coin-price-area { text-align: left; }
+        .coin-price { font-weight: bold; font-size: 15px; }
+        .coin-change { font-size: 12px; font-weight: bold; }
+        .up { color: var(--green); }
+        
+    </style>
 </head>
 <body>
 
-    <div id="app">
-        <header class="main-header">
-            <div class="logo">WhaleMind <span>AI</span></div>
-            <div class="status-indicator"><i class="fas fa-shield-alt"></i> نظام هجين آمن</div>
-        </header>
+    <header class="main-header">
+        <div class="logo">WhaleMind <span>AI</span></div>
+        <div class="status-icon"><i class="fas fa-shield-alt"></i> هجين آمن</div>
+    </header>
 
-        <main id="content-area" class="viewport">
-            </main>
+    <div class="viewport" id="content">
+        
+        <div class="card promo-banner">
+            <h4 style="color:var(--accent)">نظام التداول الهجين نشط</h4>
+            <p style="font-size:12px; color:var(--text-dim); margin-top:5px;">استفد من تحليل الحيتان والذكاء الاصطناعي</p>
+        </div>
 
-        <nav class="bottom-nav">
-            <div class="nav-item active" onclick="router.load('home')">
-                <i class="fas fa-home"></i><span>الرئيسية</span>
+        <div class="grid-4">
+            <div class="feat-item"><div class="feat-icon"><i class="fas fa-robot"></i></div><span>الروبوت</span></div>
+            <div class="feat-item"><div class="feat-icon"><i class="fas fa-chart-pie"></i></div><span>النسخ</span></div>
+            <div class="feat-item"><div class="feat-icon"><i class="fas fa-broadcast-tower"></i></div><span>الإشارات</span></div>
+            <div class="feat-item"><div class="feat-icon"><i class="fas fa-th-large"></i></div><span>المزيد</span></div>
+        </div>
+
+        <div class="card" style="padding: 10px;">
+            <div style="font-weight: bold; padding: 10px 0 5px 0;">قائمة الرواج</div>
+            
+            <div class="coin-row">
+                <div>
+                    <span class="coin-name">BTC</span> <span class="coin-symbol">/USDT</span>
+                    <div style="font-size:11px; color:var(--text-dim)">روبوت نشط</div>
+                </div>
+                <div class="coin-price-area">
+                    <div class="coin-price">$77,366.28</div>
+                    <div class="coin-change up">+2.14%</div>
+                </div>
             </div>
-            <div class="nav-item" onclick="router.load('markets')">
-                <i class="fas fa-chart-line"></i><span>الأسواق</span>
+
+            <div class="coin-row">
+                <div>
+                    <span class="coin-name">ETH</span> <span class="coin-symbol">/USDT</span>
+                    <div style="font-size:11px; color:var(--text-dim)">روبوت نشط</div>
+                </div>
+                <div class="coin-price-area">
+                    <div class="coin-price">$3,850.12</div>
+                    <div class="coin-change up">+1.78%</div>
+                </div>
             </div>
-            <div class="nav-item" onclick="router.load('trade')">
-                <i class="fas fa-exchange-alt"></i><span>تداول</span>
-            </div>
-            <div class="nav-item" onclick="router.load('futures')">
-                <i class="fas fa-bolt"></i><span>العقود</span>
-            </div>
-            <div class="nav-item" onclick="router.load('wallets')">
-                <i class="fas fa-wallet"></i><span>المحفظة</span>
-            </div>
-        </nav>
+        </div>
     </div>
 
-    <script src="app.js"></script>
+    <nav class="bottom-nav">
+        <div class="nav-item active"><i class="fas fa-home"></i><span>الرئيسية</span></div>
+        <div class="nav-item"><i class="fas fa-chart-line"></i><span>الأسواق</span></div>
+        <div class="nav-item"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
+        <div class="nav-item"><i class="fas fa-bolt"></i><span>العقود</span></div>
+        <div class="nav-item"><i class="fas fa-wallet"></i><span>المحفظة</span></div>
+    </nav>
+
 </body>
 </html>
+
