@@ -1,30 +1,36 @@
 // WhaleMind AI - Titanium 60 Internal Logic Bridge & Financial Monitor
 const WhaleMindBot = {
-    // 1. تفعيل المحرك وربط البيانات الحية (باينانس + النظام)
+    // 1. تفعيل المحرك وربط البيانات الحية
     activateEngine: async function() {
         console.log("🚀 جاري الاتصال بنظام Titanium 60...");
         
         try {
+            // الجسر يطلب الحالة من الدماغ
             const response = await fetch('/api/status');
             const data = await response.json();
             
             const statusEl = document.getElementById('system-status');
             const balanceEl = document.getElementById('total-balance');
 
-            if(data.status === "ACTIVE") {
+            // تعديل: الدماغ يرسل "ONLINE" وليس "ACTIVE" حسب كود بايثون السابق
+            if(data.status === "ONLINE") {
                 statusEl.innerText = "🤖 الروبوت يعمل بالذكاء الاصطناعي (T60)";
                 statusEl.style.color = "var(--green)";
                 
-                // عرض رصيدك الحقيقي المسحوب من باينانس (المفاتيح المخفية في Vercel)
-                if (data.live_balance !== undefined) {
-                    balanceEl.innerText = `$${parseFloat(data.live_balance).toLocaleString()}`;
+                // عرض رصيد الحيتان المبدئي لفتح الشهية
+                if (data.whale_radar) {
+                    console.log("🐋 رادار الحيتان متصل ومستعد.");
                 }
                 
                 this.startMonitoring();
             }
         } catch (error) {
             console.error("❌ فشل الاتصال بالدماغ الرقمي");
-            document.getElementById('system-status').innerText = "⚠️ الدماغ غير متصل";
+            const statusEl = document.getElementById('system-status');
+            if(statusEl) {
+                statusEl.innerText = "⚠️ الدماغ غير متصل (X)";
+                statusEl.style.color = "var(--red)";
+            }
         }
     },
 
@@ -40,7 +46,8 @@ const WhaleMindBot = {
         }
 
         try {
-            const res = await fetch('/api/verify-keys', {
+            // الجسر يرسل البيانات للدماغ للتأكد منها عبر مكتبة ccxt
+            const res = await fetch('/api/connect-client', { // تعديل المسار ليتوافق مع engine.py
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ exchange, apiKey, secret })
@@ -49,6 +56,9 @@ const WhaleMindBot = {
 
             if (result.status === "SUCCESS") {
                 alert("✅ تم الربط بنجاح! الروبوت بدأ بمراقبة حسابك.");
+                if(result.balance) {
+                    document.getElementById('total-balance').innerText = `$${result.balance}`;
+                }
             } else {
                 alert("❌ فشل الربط: " + result.message);
             }
@@ -61,11 +71,8 @@ const WhaleMindBot = {
     startMonitoring: function() {
         setInterval(async () => {
             try {
-                await fetch('/api/trade', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ symbol: 'BTC/USDT' })
-                });
+                // إبقاء الاتصال حياً مع السيرفر
+                await fetch('/api/status');
                 console.log("🧠 Titanium 60: تم تحديث التحليل الصامت للسوق.");
             } catch (e) {}
         }, 60000); 
@@ -79,7 +86,6 @@ const WhaleMindFinance = {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الفحص...';
         
         try {
-            // استدعاء الدالة التي تستخدم مفتاح TronGrid الخاص بكِ
             const res = await fetch('/api/verify-payment');
             const data = await res.json();
             
@@ -92,18 +98,13 @@ const WhaleMindFinance = {
                 btn.innerHTML = '<i class="fas fa-sync"></i> تحقق مرة أخرى';
             }
         } catch (e) {
-            alert("⚠️ خطأ فني أثناء الفحص");
+            alert("⚠️ لا توجد استجابة من محرك الدفع حالياً");
             btn.innerHTML = '<i class="fas fa-sync"></i> إعادة المحاولة';
         }
     }
 };
 
-// تشغيل الجسر فور تحميل الصفحة
-window.addEventListener('load', () => {
-    WhaleMindBot.activateEngine();
-});
-
-// دالة نسخ عنوان المحفظة للمستخدمين
+// دالة نسخ عنوان المحفظة
 function copyAddress() {
     const addr = document.getElementById('tron-addr').innerText;
     navigator.clipboard.writeText(addr).then(() => {
