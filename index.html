@@ -2,134 +2,122 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhaleMind AI | Terminal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WhaleMind Terminal</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg-master: #0b0e11;
-            --surface-card: #1e2329;
-            --neon-blue: #00d2ff;
-            --binance-gray: #848e9c;
-            --up: #0ecb81;
-            --down: #f6465d;
-            --border-alpha: rgba(255, 255, 255, 0.05);
+            --bg-binance: #0b0e11;
+            --surface-binance: #1e2329;
+            --whale-neon: #00d2ff;
+            --up-green: #0ecb81;
+            --text-gray: #848e9c;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-master); color: #fff; overflow: hidden; height: 100vh; }
+        /* منع أي حركة عشوائية للشاشة */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body { background: var(--bg-binance); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* 1. نظام الطبقة المنزلقة (The Depth Drawer) */
-        .depth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; display: none; backdrop-filter: blur(4px); }
-        .side-profile { position: fixed; top: 0; right: -100%; width: 82%; height: 100%; background: var(--bg-master); z-index: 3500; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 1px solid var(--neon-blue); padding: 40px 20px; }
-        .side-profile.active { right: 0; }
+        /* 1. الهيدر (قفل ميكانيكي علوي) */
+        header {
+            height: 62px; min-height: 62px; padding: 0 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--bg-binance); border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 2000;
+        }
+        .user-auth { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--whale-neon); display: flex; align-items: center; justify-content: center; color: var(--whale-neon); }
+        .search-global { flex: 1; margin: 0 12px; background: var(--surface-binance); height: 36px; border-radius: 18px; display: flex; align-items: center; padding: 0 15px; color: var(--text-gray); font-size: 12px; }
 
-        /* 2. الهيدر الثابت (Top Control) */
-        header { position: sticky; top: 0; z-index: 1000; background: var(--bg-master); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-alpha); }
-        .user-gate { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--neon-blue); display: flex; align-items: center; justify-content: center; color: var(--neon-blue); cursor: pointer; }
-        .search-engine { flex: 1; background: var(--surface-card); margin: 0 12px; padding: 10px 15px; border-radius: 20px; font-size: 12px; color: var(--binance-gray); display: flex; align-items: center; gap: 8px; }
+        /* 2. منطقة العرض (Viewport) - هي الوحيدة التي تتحرك */
+        .content-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 85px; }
 
-        /* 3. حاوية المحتوى (Infinite Viewport) */
-        .app-viewport { height: calc(100vh - 135px); overflow-y: auto; scroll-behavior: smooth; }
+        /* 3. نظام الإعلانات (Cards) */
+        .promo-slider { display: flex; overflow-x: auto; padding: 15px; gap: 12px; scrollbar-width: none; }
+        .promo-slider::-webkit-scrollbar { display: none; }
+        .ad-card { min-width: 88%; height: 135px; border-radius: 12px; background: linear-gradient(135deg, #1e2329, #00d2ff08); border: 1px solid rgba(255,255,255,0.05); padding: 20px; flex-shrink: 0; }
 
-        /* 4. كروت الإعلانات والبيانات (Binance Style Cards) */
-        .promo-area { display: flex; overflow-x: auto; padding: 15px; gap: 12px; scroll-snap-type: x mandatory; scrollbar-width: none; }
-        .promo-card { min-width: 90%; height: 150px; border-radius: 16px; background: linear-gradient(135deg, #1e2329, #00d2ff11); border: 1px solid var(--border-alpha); scroll-snap-align: center; padding: 20px; position: relative; }
+        /* 4. شبكة الخدمات (Grid Matrix) */
+        .grid-services { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 20px 16px; border-bottom: 8px solid #000; }
+        .service-node { text-align: center; }
+        .service-node i { font-size: 22px; color: var(--whale-neon); margin-bottom: 8px; display: block; filter: drop-shadow(0 0 5px rgba(0,210,255,0.3)); }
+        .service-node span { font-size: 11px; font-weight: 700; color: #fff; }
 
-        /* 5. شبكة الخدمات المتقدمة */
-        .services-hub { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 20px 16px; border-bottom: 8px solid #000; }
-        .hub-item { text-align: center; color: var(--binance-gray); }
-        .hub-item i { font-size: 22px; color: var(--neon-blue); margin-bottom: 8px; filter: drop-shadow(0 0 5px var(--neon-blue)); }
-        .hub-item span { font-size: 11px; display: block; font-weight: 600; color: #fff; }
+        /* 5. التبويبات المثبتة (The Sticky Tabs) */
+        .tabs-container {
+            position: sticky; top: 0; z-index: 1000; background: var(--bg-binance);
+            display: flex; gap: 24px; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .tab-link { padding: 16px 0; font-size: 14px; font-weight: 900; color: var(--text-gray); white-space: nowrap; border-bottom: 2px solid transparent; }
+        .tab-link.active { color: var(--whale-neon); border-bottom-color: var(--whale-neon); }
 
-        /* 6. التبويبات المثبتة (Sticky System Tabs) */
-        .sticky-tabs { position: sticky; top: 0; z-index: 900; background: var(--bg-master); display: flex; gap: 20px; padding: 0 16px; border-bottom: 1px solid var(--border-alpha); overflow-x: auto; scrollbar-width: none; }
-        .tab-trigger { padding: 16px 0; font-size: 14px; font-weight: 900; color: var(--binance-gray); white-space: nowrap; border-bottom: 2px solid transparent; }
-        .tab-trigger.active { color: var(--neon-blue); border-bottom-color: var(--neon-blue); }
-
-        /* 7. قائمة العملات الاحترافية */
-        .market-list { padding: 10px 16px; }
-        .market-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border-alpha); }
+        /* 6. قائمة العملات (Market Feed) */
+        .market-row { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.02); }
         .coin-meta { display: flex; align-items: center; gap: 12px; }
         .coin-icon { width: 32px; height: 32px; border-radius: 50%; }
-        .price-data { text-align: left; flex: 1; padding-left: 20px; }
-        .price-val { font-size: 16px; font-weight: 900; }
-        .change-badge { width: 80px; height: 35px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 900; background: rgba(14,203,129,0.15); color: var(--up); }
+        .price-section { text-align: left; flex: 1; padding-left: 20px; }
+        .main-val { font-size: 16px; font-weight: 900; }
+        .pct-badge { width: 82px; height: 35px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 900; background: rgba(14,203,129,0.15); color: var(--up-green); }
 
-        /* 8. الفوتر خماسي الأبعاد (Universal Footer) */
-        .master-footer { position: fixed; bottom: 0; width: 100%; height: 70px; background: var(--bg-master); border-top: 1px solid var(--border-alpha); display: grid; grid-template-columns: repeat(5, 1fr); z-index: 2000; }
-        .nav-node { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--binance-gray); text-decoration: none; font-size: 10px; font-weight: bold; }
+        /* 7. الفوتر (القاعدة الحديدية) */
+        footer {
+            position: fixed; bottom: 0; width: 100%; height: 75px;
+            background: #12161c; border-top: 1px solid rgba(255,255,255,0.05);
+            display: grid; grid-template-columns: repeat(5, 1fr); z-index: 2000;
+        }
+        .nav-node { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-gray); text-decoration: none; font-size: 10px; font-weight: 700; }
         .nav-node.active { color: #fff; }
-        .nav-node i { font-size: 20px; margin-bottom: 4px; }
+        .nav-node i { font-size: 22px; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
-    <div class="depth-overlay" id="overlay" onclick="toggleProfile()"></div>
-    <div class="side-profile" id="sideProfile">
-        <h2 style="color:var(--neon-blue); margin-bottom:30px;">WhaleMind AI</h2>
-        <div style="display:flex; flex-direction:column; gap:25px;">
-            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--surface-card); padding-bottom:15px;">إعدادات الحساب <i class="fas fa-cog"></i></div>
-            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--surface-card); padding-bottom:15px;">مركز الدفع <i class="fas fa-credit-card"></i></div>
-            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--surface-card); padding-bottom:15px;">الأمان <i class="fas fa-shield-alt"></i></div>
-        </div>
-    </div>
-
     <header>
-        <div class="user-gate" onclick="toggleProfile()"><i class="fas fa-user"></i></div>
-        <div class="search-engine"><i class="fas fa-search"></i> ابحث عن الحيتان...</div>
-        <div style="display:flex; gap:15px; color:var(--binance-gray);"><i class="fas fa-qrcode"></i><i class="fas fa-bell"></i></div>
+        <div class="user-auth"><i class="fas fa-user"></i></div>
+        <div class="search-global"><i class="fas fa-search"></i> ابحث عن السيولة...</div>
+        <div style="display:flex; gap:15px; color:var(--text-gray); font-size:18px;"><i class="fas fa-qrcode"></i><i class="fas fa-bell"></i></div>
     </header>
 
-    <div class="app-viewport">
-        <div class="promo-area">
-            <div class="promo-card">
-                <h3 style="color:var(--neon-blue)">WhaleMind Pro</h3>
-                <p style="font-size:12px; color:var(--binance-gray); margin-top:5px;">رادار الحيتان متاح الآن بنسخة Alpha v2.0</p>
+    <div class="content-scroll">
+        <div class="promo-slider">
+            <div class="ad-card">
+                <h3 style="color:var(--whale-neon)">WhaleMind Pro</h3>
+                <p style="font-size:12px; color:var(--text-gray); margin-top:8px;">نظام الرصد v2.0 متصل الآن</p>
+            </div>
+            <div class="ad-card">
+                <h3 style="color:var(--whale-neon)">Alpha Signals</h3>
+                <p style="font-size:12px; color:var(--text-gray); margin-top:8px;">انضم للقناة المدفوعة</p>
             </div>
         </div>
 
-        <section class="services-hub">
-            <div class="hub-item"><i class="fas fa-robot"></i><span>بوت آلي</span></div>
-            <div class="hub-item"><i class="fas fa-satellite-dish"></i><span>الرادار</span></div>
-            <div class="hub-item"><i class="fas fa-brain"></i><span>الألفا</span></div>
-            <div class="hub-item"><i class="fas fa-ellipsis-h"></i><span>المزيد</span></div>
+        <section class="grid-services">
+            <div class="service-node"><i class="fas fa-robot"></i><span>بوت آلي</span></div>
+            <div class="service-node"><i class="fas fa-satellite-dish"></i><span>الرادار</span></div>
+            <div class="service-node"><i class="fas fa-brain"></i><span>الألفا</span></div>
+            <div class="service-node"><i class="fas fa-ellipsis-h"></i><span>المزيد</span></div>
         </section>
 
-        <nav class="sticky-tabs">
-            <div class="tab-trigger active">المفضلة</div>
-            <div class="tab-trigger">الرائجة</div>
-            <div class="tab-trigger">جديدة</div>
-            <div class="tab-trigger">حجم 24س</div>
+        <nav class="tabs-container">
+            <div class="tab-link active">المفضلة</div>
+            <div class="tab-link">الرائجة</div>
+            <div class="tab-link">جديدة</div>
         </nav>
 
-        <main class="market-list">
-            <div class="market-row">
-                <div class="coin-meta">
-                    <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" class="coin-icon">
-                    <div><div style="font-weight:900;">BTC <span style="font-size:10px; color:var(--binance-gray)">/ USDT</span></div><div style="font-size:11px; color:var(--binance-gray)">Vol 45.2B</div></div>
-                </div>
-                <div class="price-data"><div class="price-val">64,520.10</div><div style="font-size:10px; color:var(--binance-gray)">$64,520.10</div></div>
-                <div class="change-badge">+2.45%</div>
+        <div class="market-row">
+            <div class="coin-meta">
+                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" class="coin-icon">
+                <div><div style="font-weight:900;">BTC <span style="font-size:10px; color:var(--text-gray)">/ USDT</span></div><div style="font-size:11px; color:var(--text-gray)">Vol 45.2B</div></div>
             </div>
+            <div class="price-section"><div class="main-val">64,520.10</div><div style="font-size:10px; color:var(--text-gray)">$64,520.10</div></div>
+            <div class="pct-badge">+2.45%</div>
         </div>
-    </main>
+        </div>
 
-    <nav class="master-footer">
-        <a href="index.html" class="nav-node active"><i class="fas fa-home"></i><span>الرئيسية</span></a>
-        <a href="markets.html" class="nav-node"><i class="fas fa-chart-line"></i><span>الأسواق</span></a>
-        <a href="trade.html" class="nav-node"><i class="fas fa-exchange-alt"></i><span>تداول</span></a>
-        <a href="futures.html" class="nav-node"><i class="fas fa-bolt"></i><span>العقود</span></a>
-        <a href="wallet.html" class="nav-node"><i class="fas fa-wallet"></i><span>المحفظة</span></a>
-    </nav>
+    <footer>
+        <a href="#" class="nav-node active"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+        <a href="#" class="nav-node"><i class="fas fa-chart-line"></i><span>الأسواق</span></a>
+        <a href="#" class="nav-node"><i class="fas fa-exchange-alt"></i><span>تداول</span></a>
+        <a href="#" class="nav-node"><i class="fas fa-bolt"></i><span>العقود</span></a>
+        <a href="#" class="nav-node"><i class="fas fa-wallet"></i><span>الأصول</span></a>
+    </footer>
 
-    <script>
-        function toggleProfile() {
-            const side = document.getElementById('sideProfile');
-            const overlay = document.getElementById('overlay');
-            side.classList.toggle('active');
-            overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
-        }
-    </script>
 </body>
 </html>
