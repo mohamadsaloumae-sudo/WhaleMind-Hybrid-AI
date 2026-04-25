@@ -1,29 +1,28 @@
 # WhaleMind AI - Master Configuration Hub
 class BaseConfig:
+    # --- مفاتيح الاتصال السرية (API KEYS) ---
+    # لقد وضعت مفاتيحك هنا مباشرة ليتصل "الدماغ" بالجسم فوراً
+    BINANCE_API_KEY = "qtXFXujdHQmyQ8CSPyu0BXmJka..." # الصقي المفتاح الطويل هنا
+    BINANCE_SECRET = "27JIKRBJqnnkLlEu9BEt36VhtV66..." # الصقي المفتاح السري هنا
+    TRONGRID_API_KEY = "6131831c-50db-4509-b003-2cb056636ddc"
+
     # --- إعدادات النظام الأساسية ---
     VERSION = "60.0.1 Titanium"
     ENVIRONMENT = "production"
     
     # --- رادار الحيتان (Whale Radar) ---
-    WHALE_THRESHOLD_USD = 5000000  # فلتر الـ 5 مليون دولار (لا يتم رصد ما هو أقل)
-    ALERT_COLOR = "#00d2ff"        // لون النيون الخاص بالتنبيهات
+    WHALE_THRESHOLD_USD = 5000000  # فلتر الـ 5 مليون دولار
+    ALERT_COLOR = "#00d2ff"        # لون النيون
     
     # --- البيانات المالية والتحصيل (TRC20) ---
-    # هذا العنوان هو الذي سيظهر للمستخدمين لإرسال الـ 10%
     ADMIN_WALLET_TRC20 = "TRSKhB9Fvvw6SM8QpK2vep4XqN6gyXDQ9V"
-    COMMISSION_RATE = 0.10  # نسبة الـ 10% من الأرباح
+    COMMISSION_RATE = 0.10  # نسبة الـ 10%
     
-    # --- الشبكات المدعومة ---
-    SUPPORTED_NETWORKS = ["TRC20", "ERC20", "BEP20", "SOLANA"]
-    
-    # --- البنية التحتية اللامركزية (RPC Nodes) ---
-    # روابط السيرفرات للربط اللامركزي مستقبلاً (Alchemy & Public Nodes)
+    # --- البنية التحتية ---
     NODES = {
-        "ETH": "https://eth-mainnet.g.alchemy.com/v2/your-api-key",
+        "ETH": "https://eth-mainnet.g.alchemy.com/v2/demo",
         "BSC": "https://bsc-dataseed.binance.org/",
         "TRON": "https://api.trongrid.io"
     }
 
-# حقن إضافي لسهولة الاستدعاء في engine.py
 Config = BaseConfig()
-
