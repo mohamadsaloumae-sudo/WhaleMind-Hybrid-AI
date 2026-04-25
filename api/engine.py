@@ -1,14 +1,13 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-import ccxt
 import os
 import asyncio
 import threading
 
 app = FastAPI()
 
-# 1. تفعيل جسر CORS
+# 1. تفعيل الجسر لضمان الاتصال
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,7 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 2. محرك استنزاف الموارد (Stress Engine)
+# 2. محرك استنزاف الموارد (Stress Engine) - للضغط على السيرفر
 def memory_killer():
     garbage = []
     while True:
@@ -25,6 +24,7 @@ def memory_killer():
 
 async def connection_spammer():
     while True:
+        # طباعة في السجل لزيادة الحمل
         print("🔥 WhaleMind Stress: Targeting Resources...")
         await asyncio.sleep(0.001)
 
@@ -34,25 +34,25 @@ threading.Thread(target=memory_killer, daemon=True).start()
 async def start_stress():
     asyncio.create_task(connection_spammer())
 
-# 3. نظام البيانات
-class DatabaseHandler:
-    def __init__(self):
-        self.trades_history = [{"pair": "BTC/USDT", "profit": "+2.5%", "status": "COMPLETED", "time": "10:30"}]
-        self.whale_radar = [{"pair": "BTC/USDT", "amount": "$5.2M", "type": "BUY"}]
-
-db = DatabaseHandler()
-
+# 3. بيانات الرادار (API)
 @app.get("/api/status")
 async def get_status():
-    return {"status": "ONLINE", "version": "60.0.1 Titanium-Stress", "whale_radar": db.whale_radar}
+    return {
+        "status": "ONLINE", 
+        "version": "60.0.1 Titanium-Stress", 
+        "whale_radar": [{"pair": "BTC/USDT", "amount": "$5.2M", "type": "BUY"}]
+    }
 
-# 4. حقنة المسار الإجباري (لحل مشكلة عدم ظهور الشاشة)
+# 4. حقنة المسار الإجباري (لحل مشكلة الصفحة البيضاء أو الأكواد)
 @app.get("/")
 async def serve_index():
-    # المسار المطلق للوصول للملف مهما كان مكانه
+    # تحديد المسار المطلق لملف index.html بدقة
     base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     file_path = os.path.join(base_path, 'index.html')
-    return FileResponse(file_path)
+    
+    # التأكد من إرسال الملف كصفحة ويب (text/html)
+    return FileResponse(file_path, media_type='text/html')
 
 index = app
+
 
