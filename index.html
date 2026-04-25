@@ -1,149 +1,114 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhaleMind Hybrid AI | Global Terminal</title>
-    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WhaleMind Terminal</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-black: #020609;
-            --neon-blue: #00d2ff;
-            --panel-bg: #0b0e11;
-            --border: #1e2329;
-            --green: #0ecb81;
-            --red: #f6465d;
-            --text-gray: #848e9c;
+        :root { --bg: #0b0e11; --nav-bg: #181a20; --accent: #fcd535; --text: #eaecef; --secondary: #707a8a; --border: #2b3139; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', Roboto, sans-serif; overflow: hidden; }
+
+        /* منطقة المحتوى المتغير */
+        .viewport { height: calc(100vh - 65px); overflow-y: auto; }
+        .page { display: none; }
+        .active-page { display: block; }
+
+        /* الأزرار الخمسة الاستاندرد */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; height: 65px;
+            background: var(--nav-bg); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
         }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--secondary); cursor: pointer; font-size: 11px; flex: 1; transition: 0.2s; }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+        .nav-item.active { color: var(--accent); }
 
-        body { margin: 0; background: var(--bg-black); color: #fff; font-family: 'Inter', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        /* Navigation Bar */
-        header { height: 50px; background: var(--panel-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
-        .logo { font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-weight: 900; font-size: 20px; }
-        .market-info { display: flex; gap: 25px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
-        .market-info span { color: var(--green); }
-
-        /* Professional Layout */
-        .main-view { display: grid; grid-template-columns: 60px 1fr 340px; flex: 1; overflow: hidden; }
-
-        /* Left Tools */
-        .sidebar-tools { background: var(--panel-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 30px; }
-        .sidebar-tools i { color: var(--text-gray); font-size: 20px; cursor: pointer; transition: 0.3s; }
-        .sidebar-tools i:hover, .sidebar-tools i.active { color: var(--neon-blue); filter: drop-shadow(0 0 5px var(--neon-blue)); }
-
-        /* Chart Center */
-        .center-stage { display: flex; flex-direction: column; position: relative; border-right: 1px solid var(--border); }
-        #trading-chart { flex: 1; width: 100%; height: 100%; }
-
-        /* Floating AI Analysis Card */
-        .ai-status-card {
-            position: absolute; top: 20px; left: 20px; background: rgba(11, 14, 17, 0.85);
-            border: 1px solid var(--neon-blue); padding: 15px; border-radius: 8px; z-index: 100;
-            backdrop-filter: blur(8px); box-shadow: 0 0 20px rgba(0, 210, 255, 0.15);
-        }
-
-        /* Right Panel: Whale Terminal */
-        .whale-terminal { display: flex; flex-direction: column; background: var(--panel-bg); }
-        .terminal-head { padding: 15px; font-family: 'Orbitron', sans-serif; font-size: 13px; color: var(--neon-blue); border-bottom: 1px solid var(--border); background: rgba(0,210,255,0.02); }
-        .whale-feed { flex: 1; overflow-y: auto; padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-        .feed-item { margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 5px; }
-        .badge { background: var(--neon-blue); color: #000; padding: 2px 5px; border-radius: 3px; font-weight: bold; font-size: 9px; margin-right: 5px; }
-
-        /* Bottom Control */
-        .bottom-bar { height: 30px; background: var(--panel-bg); border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; font-size: 11px; color: var(--text-gray); justify-content: space-between; }
+        /* ستايل المنصات (الكروت) */
+        .header-pro { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: var(--bg); }
+        .market-card { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .price-up { color: #0ecb81; font-weight: bold; }
         
-        .join-btn { background: var(--neon-blue); color: #000; text-decoration: none; padding: 12px; text-align: center; margin: 15px; border-radius: 5px; font-weight: bold; transition: 0.3s; }
-        .join-btn:hover { background: #fff; box-shadow: 0 0 15px var(--neon-blue); }
+        /* أزرار التداول */
+        .trade-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; }
+        .btn-buy { background: #0ecb81; color: #fff; padding: 12px; border-radius: 4px; text-align: center; font-weight: bold; cursor: pointer; }
+        .btn-sell { background: #f6465d; color: #fff; padding: 12px; border-radius: 4px; text-align: center; font-weight: bold; cursor: pointer; }
+
+        /* قسم الميزات (More) */
+        .more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 20px; text-align: center; font-size: 11px; }
+        .feature-icon { width: 40px; height: 40px; background: #2b3139; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; color: var(--accent); }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">WHALEMIND <span>HYBRID AI</span></div>
-    <div class="market-info">
-        <div>BTC/USDT <span>$69,842.10</span></div>
-        <div>ETH/USDT <span>$3,452.45</span></div>
-        <div>VOL: <span style="color:#fff">2.4B</span></div>
-    </div>
-    <div style="font-size: 12px; color: var(--green);"><i class="fas fa-signal"></i> SYSTEM LIVE</div>
-</header>
-
-<div class="main-view">
-    <div class="sidebar-tools">
-        <i class="fas fa-chart-line active"></i>
-        <i class="fas fa-robot"></i>
-        <i class="fas fa-satellite"></i>
-        <i class="fas fa-shield-alt"></i>
-        <div style="margin-top:auto;"><i class="fas fa-cog"></i></div>
-    </div>
-
-    <div class="center-stage">
-        <div class="ai-status-card">
-            <div style="font-size: 10px; color: var(--neon-blue); margin-bottom: 5px;">HYBRID AI PROBABILITY</div>
-            <div style="font-size: 24px; font-weight: bold;">94.8% <span style="font-size: 14px; color: var(--green);">BULLISH</span></div>
-            <div style="font-size: 11px; color: var(--text-gray); margin-top: 5px;">Massive Liquidity Inflow Detected</div>
+<div class="viewport">
+    <div id="home" class="page active-page">
+        <div class="header-pro">
+            <div style="font-weight: bold; font-size: 18px;">WhaleMind</div>
+            <i class="fas fa-user-circle" style="font-size: 22px; color: var(--secondary);"></i>
         </div>
-        <div id="trading-chart"></div>
+        <div class="more-grid">
+            <div><div class="feature-icon"><i class="fas fa-robot"></i></div>البوت الآلي</div>
+            <div><div class="feature-icon"><i class="fas fa-brain"></i></div>ذكاء هجين</div>
+            <div><div class="feature-icon"><i class="fas fa-copy"></i></div>نسخ الصفقات</div>
+            <div><div class="feature-icon"><i class="fas fa-ellipsis-h"></i></div>المزيد</div>
+        </div>
+        <div style="padding: 15px; font-weight: bold;">قائمة الرواج</div>
+        <div class="market-card"><div>BTC/USDT</div><div class="price-up">$69,420.50</div></div>
+        <div class="market-card"><div>ETH/USDT</div><div class="price-up">$3,480.12</div></div>
     </div>
 
-    <div class="whale-terminal">
-        <div class="terminal-head"><i class="fas fa-radar"></i> WHALE RADAR TERMINAL</div>
-        <div class="whale-feed" id="whale-feed">
+    <div id="markets" class="page">
+        <div class="header-pro"><b>الأسواق</b></div>
+        <div class="market-card"><div>BTC</div><div class="price-up">+2.4%</div></div>
+        <div class="market-card"><div>ETH</div><div class="price-up">+1.8%</div></div>
+    </div>
+
+    <div id="trade" class="page">
+        <div class="header-pro"><b>تداول (سبوت)</b></div>
+        <div style="height: 200px; background: #161a1e; margin: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--secondary);">واجهة تداول العملات</div>
+        <div class="trade-btns"><div class="btn-buy">شراء</div><div class="btn-sell">بيع</div></div>
+    </div>
+
+    <div id="futures" class="page">
+        <div class="header-pro"><b>العقود الآجلة (فيوتشر)</b></div>
+        <div style="padding: 15px;">
+            <div style="background: #1e2329; padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent);">
+                <div style="font-size: 12px; color: var(--accent);">رادار الحيتان مفعّل</div>
+                <div style="font-size: 18px; margin-top: 5px;">احتمالية النجاح: 94%</div>
             </div>
-        <a href="https://t.me/WhaleMindAI" class="join-btn">ACCESS VIP SIGNALS</a>
+            <div class="trade-btns" style="margin-top: 20px;">
+                <div class="btn-buy" style="background:#0ecb81">شراء / صعود</div>
+                <div class="btn-sell" style="background:#f6465d">بيع / هبوط</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="wallets" class="page">
+        <div class="header-pro"><b>المحفظة</b></div>
+        <div style="padding: 20px; text-align: center;">
+            <div style="color: var(--secondary); font-size: 14px;">إجمالي الرصيد المقدر</div>
+            <div style="font-size: 32px; font-weight: bold; margin: 10px 0;">0.000000 <span style="font-size: 14px;">BTC</span></div>
+        </div>
     </div>
 </div>
 
-<div class="bottom-bar">
-    <div>WHALEMIND GLOBAL ENGINE v4.0.1</div>
-    <div>SERVER STATUS: OPTIMAL | LATENCY: 12ms</div>
-</div>
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="navTo('home', this)"><i class="fas fa-home"></i>الرئيسية</div>
+    <div class="nav-item" onclick="navTo('markets', this)"><i class="fas fa-chart-line"></i>الأسواق</div>
+    <div class="nav-item" onclick="navTo('trade', this)"><i class="fas fa-exchange-alt"></i>تداول</div>
+    <div class="nav-item" onclick="navTo('futures', this)"><i class="fas fa-bolt"></i>العقود</div>
+    <div class="nav-item" onclick="navTo('wallets', this)"><i class="fas fa-wallet"></i>المحفظة</div>
+</nav>
 
 <script>
-    // 1. تشغيل الشارت العالمي
-    const chart = LightweightCharts.createChart(document.getElementById('trading-chart'), {
-        layout: { background: { color: '#020609' }, textColor: '#848e9c' },
-        grid: { vertLines: { color: '#0b0e11' }, horzLines: { color: '#0b0e11' } },
-        crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-        timeScale: { borderColor: '#1e2329' },
-    });
-    const candleSeries = chart.addCandlestickSeries({
-        upColor: '#0ecb81', downColor: '#f6465d', borderVisible: false,
-        wickUpColor: '#0ecb81', wickDownColor: '#f6465d'
-    });
-
-    // بيانات عرض احترافية
-    candleSeries.setData([
-        { time: '2026-04-18', open: 62000, high: 64000, low: 61500, close: 63500 },
-        { time: '2026-04-19', open: 63500, high: 65000, low: 63000, close: 64200 },
-        { time: '2026-04-20', open: 64200, high: 66000, low: 64000, close: 65800 },
-        { time: '2026-04-21', open: 65800, high: 68000, low: 65500, close: 67400 },
-        { time: '2026-04-22', open: 67400, high: 71000, low: 67000, close: 70200 },
-    ]);
-
-    // 2. ميكانيكا رادار الحيتان التلقائي
-    const feed = document.getElementById('whale-feed');
-    const logs = [
-        "$15.2M USDT Transfer to BTC/USDT",
-        "Whale #882 Active - High Accumulation",
-        "Institutional Buy Wall at $68,500",
-        "Alert: $22M Liquidity Entry detected",
-        "AI Confirms Trend Strength: HIGH",
-        "Smart Money Flow: +8.4% (1h)"
-    ];
-
-    function addLog() {
-        const div = document.createElement('div');
-        div.className = 'feed-item';
-        div.innerHTML = `<span class="badge">WHALE</span> ${logs[Math.floor(Math.random()*logs.length)]}`;
-        feed.prepend(div);
-        if(feed.children.length > 15) feed.lastChild.remove();
+    function navTo(pageId, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active-page');
+        el.classList.add('active');
     }
-    setInterval(addLog, 3000);
 </script>
-
 </body>
 </html>
+
