@@ -3,3 +3,5 @@ uvicorn
 ccxt
 requests
 python-multipart
+cryptography
+httpx
