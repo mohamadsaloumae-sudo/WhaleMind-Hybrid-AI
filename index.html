@@ -3,151 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhaleMind AI | Hybrid Global Terminal</title>
+    <title>WhaleMind AI | The Ultimate Hybrid System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --bg: #0b0e11; --panel: #181a20; --accent: #fcd535; --border: #2b3139;
-            --text: #eaecef; --dim: #848e9c; --green: #0ecb81; --red: #f6465d; --neon: #00d2ff;
+            --text: #eaecef; --dim: #848e9c; --green: #0ecb81; --red: #f6465d;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
-        .app-container { display: flex; flex-direction: column; height: 100vh; }
+        /* الشاصي الرئيسي للهيكل الموحد */
+        .app-shell { display: flex; flex-direction: column; height: 100vh; position: relative; }
 
-        /* 1. هيدر المواصفات العالمية (ثابت) */
-        header {
-            height: 60px; border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
-            background: var(--bg); position: sticky; top: 0; z-index: 1000;
-        }
+        /* منطقة الطبقات الديناميكية (كل زر له طبقة كاملة) */
+        #layer-manager { flex: 1; overflow-y: auto; position: relative; }
+        .page-layer { display: none; height: 100%; width: 100%; position: absolute; top: 0; left: 0; padding: 15px; }
+        .page-layer.active { display: block; animation: slideUp 0.3s ease-out; }
 
-        /* 2. منطقة المحركات (Viewport Engine) - هنا يحدث السحر */
-        #master-engine { flex: 1; overflow-y: auto; position: relative; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* طبقات النظام (المركزية، اللامركزية، الروبوت، الدردشة) */
-        .layer { display: none; height: 100%; animation: fadeIn 0.3s forwards; }
-        .layer.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* 3. البار السفلي العالمي (الخمسة الثابتة) */
+        /* البار السفلي العالمي (الخمسة أزرار الثابتة) */
         footer {
-            height: 65px; background: var(--panel); border-top: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-around;
+            height: 70px; background: var(--panel); border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-around; z-index: 1000;
         }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; color: var(--dim); cursor: pointer; font-size: 10px; }
-        .nav-btn.active { color: var(--accent); }
-        .nav-btn i { font-size: 22px; margin-bottom: 4px; }
+        .nav-link { flex: 1; display: flex; flex-direction: column; align-items: center; color: var(--dim); cursor: pointer; font-size: 11px; transition: 0.3s; }
+        .nav-link.active { color: var(--accent); }
+        .nav-link i { font-size: 24px; margin-bottom: 4px; }
 
-        /* 4. غرفة العمليات (المزيد - الهجين) */
-        .control-hub { 
+        /* مكونات الدردشة اللانهائية والسوشيال */
+        .chat-feed { height: 100%; overflow-y: scroll; display: flex; flex-direction: column; gap: 15px; }
+        .chat-bubble { background: var(--panel); padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
+        .ad-slot { background: linear-gradient(45deg, #1e2329, #2b3139); border: 1px solid var(--accent); padding: 15px; border-radius: 15px; margin: 10px 0; }
+
+        /* لوحة التحكم الهجين (المزيد) */
+        .hybrid-hub { 
             position: fixed; top: 0; right: -100%; width: 100%; height: 100%; 
-            background: var(--bg); z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 20px; overflow-y: auto;
+            background: var(--bg); z-index: 2000; transition: 0.4s; padding: 20px; 
         }
-        .control-hub.open { right: 0; }
-
-        /* مكونات التصميم العالمي */
-        .card { background: var(--panel); border-radius: 12px; padding: 15px; border: 1px solid var(--border); margin-bottom: 15px; }
-        .hub-section { margin-bottom: 25px; }
-        .section-label { color: var(--accent); font-size: 12px; font-weight: bold; margin-bottom: 12px; display: block; }
-        .menu-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: #1e2329; border-radius: 10px; margin-bottom: 8px; border: 1px solid transparent; transition: 0.2s; cursor: pointer; }
-        .menu-item:active { border-color: var(--accent); }
+        .hybrid-hub.open { right: 0; }
+        .menu-row { display: flex; align-items: center; gap: 15px; padding: 18px; background: var(--panel); border-radius: 12px; margin-bottom: 10px; border: 1px solid transparent; }
+        .menu-row:active { border-color: var(--accent); }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <header>
+<div class="app-shell">
+    <header style="height: 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 15px;">
         <div onclick="toggleHub()"><i class="fas fa-bars fa-lg"></i></div>
-        <div style="font-weight:bold; letter-spacing:1px;">WhaleMind <span style="color:var(--accent)">AI</span></div>
-        <div style="display:flex; gap:15px; color:var(--dim)"><i class="fas fa-search"></i><i class="fas fa-bell"></i></div>
+        <div style="font-weight:bold; letter-spacing:1px; color:var(--accent)">WhaleMind AI</div>
+        <div style="display:flex; gap:15px;"><i class="fas fa-search"></i><i class="fas fa-bell"></i></div>
     </header>
 
-    <main id="master-engine">
+    <main id="layer-manager">
         
-        <div id="home-layer" class="layer active">
-            <div class="card" style="margin: 15px; border-right: 4px solid var(--accent);">
-                <small style="color:var(--dim)">الرصيد الموحد (Hybrid)</small>
-                <h2 style="font-size: 30px;">$0.00</h2>
+        <section id="home" class="page-layer active">
+            <div style="background:var(--panel); padding:20px; border-radius:15px; margin-bottom:20px; border-right: 4px solid var(--accent);">
+                <small style="color:var(--dim)">الرصيد الموحد (Hybrid Engine)</small>
+                <h1 style="font-size: 35px;">$0.00</h1>
             </div>
-            <div style="padding: 0 15px;">
-                <h4>الأسواق المباشرة</h4>
-                <div id="tradingview-placeholder" style="height:300px; background:#1e2329; border-radius:12px; margin-top:10px; border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; color:var(--dim)">
-                    [ محرك TradingView ]
+            <h4>الأسواق العالمية</h4>
+            <div id="chart-area" style="height:300px; background:#1e2329; border:1px dashed var(--border); border-radius:15px; margin-top:15px; display:flex; align-items:center; justify-content:center; color:var(--dim)">
+                [ محرك TradingView الأساسي يركب هنا ]
+            </div>
+        </section>
+
+        <section id="social" class="page-layer">
+            <div class="chat-feed">
+                <div class="ad-slot">إعلان ممول: انضم لنظام النسخ الآلي الآن!</div>
+                <div class="chat-bubble"><b>حوت #1:</b> السيولة تتجه نحو السولانا الآن 🔥</div>
+                <div class="chat-bubble"><b>محلل تقني:</b> كسر منطقة 78k وشيك جداً.</div>
                 </div>
-            </div>
-        </div>
+        </section>
 
-        <div id="trade-layer" class="layer">
-            <div style="padding:15px;">
-                <h3>منصة التنفيذ الهجينة</h3>
-                <div class="card" style="margin-top:20px;">[ واجهة البيع والشراء API ]</div>
+        <section id="trade" class="page-layer">
+            <h3>تنفيذ الصفقات الهجين</h3>
+            <div style="margin-top:20px; display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button style="padding:15px; background:var(--green); border:none; border-radius:8px; color:#000; font-weight:bold;">شراء (CEX/DEX)</button>
+                <button style="padding:15px; background:var(--red); border:none; border-radius:8px; color:#fff; font-weight:bold;">بيع (CEX/DEX)</button>
             </div>
-        </div>
-
-        <div id="social-layer" class="layer">
-            <div style="padding:15px;">
-                <h3>غرف الدردشة (200+ عضو)</h3>
-                <div class="menu-item"><i class="fas fa-comments"></i> <b>غرفة حيتان البيتكوين</b></div>
-                <div class="menu-item"><i class="fas fa-ad"></i> <b>مساحة إعلانية ممولة</b></div>
-            </div>
-        </div>
+        </section>
 
     </main>
 
-    <div id="control-hub" class="control-hub">
+    <div id="hub" class="hybrid-hub">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <h3>غرفة التحكم والضبط</h3>
+            <h3>إعدادات الأنظمة الهجينة</h3>
             <i class="fas fa-times fa-lg" onclick="toggleHub()"></i>
         </div>
-
-        <div class="hub-section">
-            <span class="section-label">الربط والدمج الثلاثي</span>
-            <div class="menu-item" onclick="switchEngine('CEX')"><i class="fas fa-university"></i> منصات مركزية (Binance, OKX)</div>
-            <div class="menu-item" onclick="switchEngine('DEX')"><i class="fas fa-link"></i> منصات لامركزية (Uniswap)</div>
-            <div class="menu-item" onclick="switchEngine('WALLETS')"><i class="fas fa-wallet"></i> المحافظ (MetaMask, Trust)</div>
-        </div>
-
-        <div class="hub-section">
-            <span class="section-label">أنظمة الذكاء الاصطناعي</span>
-            <div class="menu-item"><i class="fas fa-robot"></i> ضبط الروبوت (AI Bot Control)</div>
-            <div class="menu-item"><i class="fas fa-users"></i> إعدادات نسخ الصفقات (Copy Trading)</div>
-            <div class="menu-item"><i class="fas fa-bolt"></i> رادار الحيتان (Whale Radar)</div>
-        </div>
-
-        <div class="hub-section">
-            <span class="section-label">الاشتراكات والسوشيال</span>
-            <div class="menu-item" style="color:var(--accent)"><i class="fas fa-gem"></i> باقات VIP والاشتراكات</div>
-            <div class="menu-item"><i class="fas fa-bullhorn"></i> إدارة الإعلانات</div>
-        </div>
+        <div class="menu-row" onclick="alert('تفعيل الربط المركزي')"><i class="fas fa-university"></i> منصات مركزية (CEX)</div>
+        <div class="menu-row" onclick="alert('تفعيل الربط اللامركزي')"><i class="fas fa-link"></i> منصات لامركزية (DEX)</div>
+        <div class="menu-row" onclick="alert('ضبط الروبوت')"><i class="fas fa-robot"></i> نظام الذكاء الاصطناعي (AI Bot)</div>
+        <div class="menu-row" style="color:var(--accent)"><i class="fas fa-gem"></i> باقات العضوية والاشتراكات</div>
     </div>
 
     <footer>
-        <div class="nav-btn active" onclick="navigate('home-layer', this)"><i class="fas fa-home"></i><span>الرئيسية</span></div>
-        <div class="nav-btn" onclick="navigate('social-layer', this)"><i class="fas fa-users"></i><span>الدردشة</span></div>
-        <div class="nav-btn" onclick="navigate('trade-layer', this)"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
-        <div class="nav-btn" onclick="navigate('futures', this)"><i class="fas fa-bolt"></i><span>عقود</span></div>
-        <div class="nav-btn" onclick="toggleHub()"><i class="fas fa-th-large"></i><span>المزيد</span></div>
+        <div class="nav-link active" onclick="showLayer('home', this)"><i class="fas fa-home"></i><span>الرئيسية</span></div>
+        <div class="nav-link" onclick="showLayer('social', this)"><i class="fas fa-users"></i><span>دردشة</span></div>
+        <div class="nav-link" onclick="showLayer('trade', this)"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
+        <div class="nav-link" onclick="showLayer('futures', this)"><i class="fas fa-bolt"></i><span>عقود</span></div>
+        <div class="nav-link" onclick="toggleHub()"><i class="fas fa-wallet"></i><span>المحفظة</span></div>
     </footer>
 </div>
 
 <script>
-    function toggleHub() { document.getElementById('control-hub').classList.toggle('open'); }
+    function toggleHub() { document.getElementById('hub').classList.toggle('open'); }
 
-    function navigate(layerId, btn) {
-        document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    function showLayer(layerId, btn) {
+        // إخفاء كافة الطبقات
+        document.querySelectorAll('.page-layer').forEach(p => p.classList.remove('active'));
+        // إظهار الطبقة المختارة
         document.getElementById(layerId).classList.add('active');
+        // تحديث حالة الأزرار
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
         btn.classList.add('active');
     }
-
-    function switchEngine(type) {
-        alert("يتم الآن تحويل المحرك إلى: " + type);
-        toggleHub(); // العودة للشاشة الرئيسية بعد الضبط
-    }
 </script>
-
 </body>
 </html>
