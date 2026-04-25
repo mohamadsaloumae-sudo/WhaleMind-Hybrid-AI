@@ -3,119 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhaleMind AI | Terminal</title>
+    <title>WhaleMind AI | Chassis v4</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg: #0b0e11; --panel: #1e2329; --accent: #fcd535; --border: #2b3139;
-            --text: #eaecef; --dim: #848e9c; --green: #0ecb81; --red: #f6465d; --neon: #00d2ff;
+            --bg: #0b0e11; --panel: #181a20; --accent: #fcd535; --border: #2b3139;
+            --text: #eaecef; --dim: #848e9c; --green: #0ecb81; --red: #f6465d;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
         body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
-        /* 1. هيدر المواصفات العالمية (Header Slots) */
-        header {
-            height: 60px; border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
-        }
-        .user-icon { width: 32px; height: 32px; background: var(--panel); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-
-        /* 2. منطقة العرض (حجرة المحرك) */
-        .viewport { height: calc(100vh - 125px); overflow-y: auto; padding: 15px; }
-
-        /* 3. شاصي الدمج الهجين (Hybrid Bridge) */
-        .bridge-card { 
-            background: linear-gradient(135deg, #1e2329 0%, #0b0e11 100%); 
-            border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; 
-            border-right: 4px solid var(--accent);
+        /* 1. الكابينة العلوية (Header) - ارتفاع ثابت 60px */
+        .fixed-header {
+            height: 60px; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 15px; border-bottom: 1px solid var(--border);
         }
 
-        /* 4. شبكة الميزات (الروبوت، الرادار، النسخ) */
-        .feature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
-        .feature-item { text-align: center; cursor: pointer; font-size: 11px; color: var(--dim); }
-        .icon-box { width: 50px; height: 50px; background: var(--panel); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; color: var(--accent); font-size: 20px; border: 1px solid var(--border); }
-
-        /* 5. شريط الأزرار الخمسة (Global Navigation) */
-        nav {
-            position: fixed; bottom: 0; width: 100%; height: 65px;
-            background: var(--panel); border-top: 1px solid var(--border);
-            display: flex; align-items: center; z-index: 1000;
+        /* 2. منطقة المحرك (The Engine Bay) - الارتفاع محسوب بدقة */
+        /* الحساب: 100vh - (60px هيدر + 65px بار سفلي) = 125px مساحة ميتة */
+        .engine-viewport {
+            height: calc(100vh - 125px); 
+            overflow-y: auto; 
+            background: var(--bg);
+            position: relative;
         }
-        .nav-slot { flex: 1; display: flex; flex-direction: column; align-items: center; color: var(--dim); font-size: 10px; cursor: pointer; }
-        .nav-slot.active { color: var(--accent); }
-        .nav-slot i { font-size: 22px; margin-bottom: 4px; }
 
-        /* 6. قائمة المزيد (مركز البيع والاشتراكات والربط) */
-        .drawer { 
-            position: fixed; top: 0; right: -100%; width: 85%; height: 100%; 
-            background: var(--bg); z-index: 2000; transition: 0.4s; padding: 20px; 
-            border-left: 1px solid var(--border); 
+        /* 3. الكابينة السفلية (Standard Nav) - ارتفاع ثابت 65px */
+        .fixed-bottom-nav {
+            height: 65px; background: var(--panel); border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-around;
         }
-        .drawer.active { right: 0; }
-        .menu-row { display: flex; align-items: center; gap: 15px; padding: 18px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+
+        /* عناصر التحكم العالمية (الثابتة) */
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; color: var(--dim); cursor: pointer; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item i { font-size: 22px; margin-bottom: 4px; }
+        .nav-item span { font-size: 10px; }
+
+        /* بوابة العبور للخدمات (المزيد) */
+        .services-drawer {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
+            background: var(--bg); z-index: 2000; transition: 0.3s; padding: 20px;
+        }
+        .services-drawer.open { right: 0; }
+
+        /* ستايل قائمة العملات (الترتيب العالمي) */
+        .market-list { padding: 15px; }
+        .coin-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="user-icon" onclick="toggleDrawer()"><i class="fas fa-user"></i></div>
-        <div style="font-weight:bold; letter-spacing:1px; color:var(--neon)">WhaleMind AI</div>
-        <div style="display:flex; gap:15px; color:var(--dim)">
-            <i class="fas fa-globe"></i>
-            <i class="fas fa-bell"></i>
-        </div>
+    <header class="fixed-header">
+        <div onclick="openServices()"><i class="fas fa-bars fa-lg"></i></div>
+        <div style="font-weight:bold;">WhaleMind <span style="color:var(--accent)">AI</span></div>
+        <div style="display:flex; gap:15px; color:var(--dim)"><i class="fas fa-globe"></i><i class="fas fa-bell"></i></div>
     </header>
 
-    <main class="viewport">
-        <div class="bridge-card">
-            <div style="display:flex; justify-content:space-between;">
-                <small style="color:var(--dim)">الرصيد الموحد (Hybrid Wallet)</small>
-                <i class="fas fa-shield-alt" style="color:var(--green)"></i>
+    <main class="engine-viewport" id="engine-mount">
+        <div class="market-list">
+            <div style="background:var(--panel); padding:15px; border-radius:12px; margin-bottom:15px;">
+                <small style="color:var(--dim)">الرصيد الموحد</small>
+                <h2 style="margin:5px 0;">$0.00</h2>
             </div>
-            <div style="font-size: 30px; font-weight: bold; margin: 12px 0;">$0.00</div>
-            <div style="display:flex; gap:10px;">
-                <button style="flex:1; padding:12px; border-radius:8px; border:none; background:var(--green); color:#fff; font-weight:bold;">إيداع (CEX/Internal)</button>
-                <button style="flex:1; padding:12px; border-radius:8px; border:1px solid var(--border); background:var(--panel); color:#fff;">ربط (DEX/Web3)</button>
-            </div>
-        </div>
-
-        <div class="feature-grid">
-            <div class="feature-item" onclick="toggleDrawer()"><div class="icon-box"><i class="fas fa-robot"></i></div><span>روبوت</span></div>
-            <div class="feature-item"><div class="icon-box"><i class="fas fa-bolt"></i></div><span>رادار</span></div>
-            <div class="feature-item"><div class="icon-box"><i class="fas fa-copy"></i></div><span>نسخ</span></div>
-            <div class="feature-item" onclick="toggleDrawer()"><div class="icon-box"><i class="fas fa-th-large"></i></div><span>المزيد</span></div>
-        </div>
-
-        <div id="engine-mount">
-            <h4 style="margin-bottom:15px">الأسواق الحية</h4>
-            <div style="background:var(--panel); height:200px; border-radius:12px; border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; color:var(--dim)">
-                [ مكان تركيب محرك TradingView ]
-            </div>
+            
+            <h4 style="margin: 20px 0 10px 0;">أعلى العملات</h4>
+            <div class="coin-row"><span>BTC/USDT</span> <span class="up" style="color:var(--green)">$77,366.28</span></div>
+            <div class="coin-row"><span>ETH/USDT</span> <span class="up" style="color:var(--green)">$3,850.12</span></div>
+            <div class="coin-row"><span>SOL/USDT</span> <span class="up" style="color:var(--green)">$145.45</span></div>
         </div>
     </main>
 
-    <div id="drawer" class="drawer">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+    <div id="drawer" class="services-drawer">
+        <div style="display:flex; justify-content:space-between; margin-bottom:30px;">
             <h3>الخدمات والاشتراكات</h3>
-            <i class="fas fa-times" onclick="toggleDrawer()" style="font-size:20px;"></i>
+            <i class="fas fa-times fa-lg" onclick="closeServices()"></i>
         </div>
-        <div class="menu-row" style="color:var(--accent);"><i class="fas fa-gem"></i> <b>باقات الاشتراك (VIP)</b></div>
-        <div class="menu-row"><i class="fas fa-plug"></i> ربط API (Binance/OKX)</div>
-        <div class="menu-row"><i class="fas fa-link"></i> ربط محفظة Web3</div>
-        <div class="menu-row"><i class="fas fa-microchip"></i> إعدادات الروبوت الهجين</div>
-        <div class="menu-row"><i class="fas fa-user-shield"></i> الأمان (KYC & 2FA)</div>
+        <div style="padding:15px; background:var(--panel); border-radius:12px; margin-bottom:10px;">
+            <i class="fas fa-robot"></i> روبوت التداول الذكي
+        </div>
+        <div style="padding:15px; background:var(--panel); border-radius:12px; margin-bottom:10px;">
+            <i class="fas fa-link"></i> ربط المنصات والمحافظ
+        </div>
+        <div style="padding:15px; background:var(--panel); border-radius:12px; margin-bottom:10px; color:var(--accent)">
+            <i class="fas fa-star"></i> العضوية الـ VIP
+        </div>
     </div>
 
-    <nav>
-        <div class="nav-slot active"><i class="fas fa-home"></i><span>الرئيسية</span></div>
-        <div class="nav-slot"><i class="fas fa-chart-line"></i><span>الأسواق</span></div>
-        <div class="nav-slot"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
-        <div class="nav-slot"><i class="fas fa-bolt"></i><span>عقود</span></div>
-        <div class="nav-slot" onclick="toggleDrawer()"><i class="fas fa-wallet"></i><span>المحفظة</span></div>
+    <nav class="fixed-bottom-nav">
+        <div class="nav-item active"><i class="fas fa-home"></i><span>الرئيسية</span></div>
+        <div class="nav-item"><i class="fas fa-chart-line"></i><span>الأسواق</span></div>
+        <div class="nav-item"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
+        <div class="nav-item"><i class="fas fa-bolt"></i><span>عقود</span></div>
+        <div class="nav-item" onclick="openServices()"><i class="fas fa-wallet"></i><span>المحفظة</span></div>
     </nav>
 
     <script>
-        function toggleDrawer() { document.getElementById('drawer').classList.toggle('active'); }
+        function openServices() { document.getElementById('drawer').classList.add('open'); }
+        function closeServices() { document.getElementById('drawer').classList.remove('open'); }
     </script>
 </body>
 </html>
