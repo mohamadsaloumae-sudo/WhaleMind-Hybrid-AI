@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WhaleMind AI | تداول</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --bg: #0b0e11; --surface: #1e2329; --neon: #00e5ff; --text-gray: #848e9c; --border: #2b3139; --up: #0ecb81; --down: #f6465d; }
+        body { background: var(--bg); color: #fff; font-family: 'Tajawal', sans-serif; margin: 0; padding-bottom: 75px; overflow: hidden; }
+        .header { padding: 12px 15px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); }
+        .trade-tabs { display: flex; gap: 15px; padding: 10px 15px; font-size: 14px; border-bottom: 1px solid var(--border); }
+        .active-tab { color: var(--neon); border-bottom: 2px solid var(--neon); padding-bottom: 5px; }
+        
+        #chart-area { width: 100%; height: 320px; background: #000; }
+        
+        .main-trade-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px; padding: 15px; }
+        .order-book { font-size: 11px; }
+        .ob-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
+        
+        .control-panel { display: flex; flex-direction: column; gap: 8px; }
+        .action-toggle { display: flex; background: var(--surface); border-radius: 4px; padding: 2px; }
+        .toggle-btn { flex: 1; text-align: center; padding: 6px; font-size: 12px; border-radius: 4px; cursor: pointer; }
+        .buy-active { background: var(--up); color: #000; font-weight: bold; }
+
+        .input-box { background: var(--surface); padding: 10px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 12px; border: 1px solid var(--border); }
+        .input-box input { background: transparent; border: none; color: #fff; width: 60%; outline: none; }
+        
+        .exec-btn { width: 100%; padding: 15px; border-radius: 4px; border: none; font-weight: bold; font-size: 15px; margin-top: 10px; background: var(--up); color: #000; }
+
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: var(--bg); border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(5, 1fr); z-index: 2000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: var(--text-gray); text-decoration: none; }
+        .nav-item.active { color: var(--neon); }
+    </style>
+</head>
+<body>
+    <div class="header"><b>BTC/USDT <small style="color:var(--up)">+2.4%</small></b><i class="fas fa-chart-bar"></i></div>
+    <div class="trade-tabs"><span class="active-tab">فوري</span><span>بوت التداول</span><span>المخطط</span></div>
+    
+    <div id="chart-area"></div>
+
+    <div class="main-trade-grid">
+        <div class="control-panel">
+            <div class="action-toggle"><div class="toggle-btn buy-active">شراء</div><div class="toggle-btn">بيع</div></div>
+            <div class="input-box"><span>السعر</span><input type="text" value="64520"></div>
+            <div class="input-box"><span>الكمية</span><input type="text" placeholder="0.00"></div>
+            <button class="exec-btn">شراء BTC</button>
+        </div>
+        <div class="order-book">
+            <div style="color:var(--down)">
+                <div class="ob-row"><span>64530</span><span>0.51</span></div>
+                <div class="ob-row"><span>64528</span><span>1.20</span></div>
+            </div>
+            <div style="text-align:center; padding:8px 0; font-size:14px; color:var(--up); font-weight:bold;">64520.10</div>
+            <div style="color:var(--up)">
+                <div class="ob-row"><span>64515</span><span>2.11</span></div>
+                <div class="ob-row"><span>64510</span><span>0.85</span></div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+        <a href="markets.html" class="nav-item"><i class="fas fa-chart-line"></i><span>الأسواق</span></a>
+        <a href="trade.html" class="nav-item active"><i class="fas fa-exchange-alt"></i><span>تداول</span></a>
+        <a href="futures.html" class="nav-item"><i class="fas fa-bolt"></i><span>العقود</span></a>
+        <a href="wallet.html" class="nav-item"><i class="fas fa-wallet"></i><span>المحفظة</span></a>
+    </nav>
+
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script>new TradingView.widget({"autosize":true,"symbol":"BINANCE:BTCUSDT","interval":"H","theme":"dark","style":"1","locale":"ar","container_id":"chart-area","hide_top_toolbar":true});</script>
+</body>
+</html>
