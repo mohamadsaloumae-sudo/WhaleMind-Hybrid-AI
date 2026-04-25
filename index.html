@@ -3,144 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhaleMind Terminal</title>
+    <title>WhaleMind AI</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* الأساس الهندسي للمنصات العالمية */
         :root {
-            --bg: #0b0e11;
-            --surface: #1e2329;
-            --neon: #00d2ff;
+            --binance-bg: #0b0e11;
+            --binance-surface: #1e2329;
+            --whale-neon: #00d2ff;
+            --text-gray: #848e9c;
             --up: #0ecb81;
             --down: #f6465d;
-            --text-gray: #848e9c;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        body { background: var(--bg); color: #fff; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        body { background: var(--binance-bg); color: #fff; overflow-x: hidden; height: 100vh; }
 
-        /* 1. الهيدر (Fixed Layer) */
-        .header-fixed {
-            padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
-            background: var(--bg); border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 1000;
+        /* 1. Header System - الهيدر الميكانيكي */
+        header {
+            position: sticky; top: 0; z-index: 1000; background: var(--binance-bg);
+            padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
         }
-        .search-container { flex: 1; background: var(--surface); margin: 0 12px; padding: 8px 12px; border-radius: 20px; color: var(--text-gray); font-size: 13px; }
+        .user-icon { width: 30px; height: 30px; border-radius: 50%; background: var(--binance-surface); display: flex; align-items: center; justify-content: center; color: var(--whale-neon); border: 1px solid var(--whale-neon); }
+        .search-bar { flex: 1; margin: 0 12px; background: var(--binance-surface); padding: 8px 12px; border-radius: 20px; color: var(--text-gray); font-size: 12px; display: flex; align-items: center; gap: 8px; }
 
-        /* 2. منطقة المحتوى (Scrollable Depth) */
-        .viewport { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+        /* 2. Banner System - نظام الإعلانات */
+        .banners { display: flex; overflow-x: auto; padding: 15px; gap: 12px; scrollbar-width: none; }
+        .banners::-webkit-scrollbar { display: none; }
+        .banner { min-width: 85%; height: 130px; border-radius: 12px; background: linear-gradient(135deg, #1e2329, #00d2ff11); border: 1px solid rgba(0,210,255,0.15); padding: 20px; }
 
-        /* 3. سلايدر الإعلانات (Elastic Horizontal) */
-        .banner-slider { display: flex; overflow-x: auto; padding: 15px; gap: 12px; scroll-snap-type: x mandatory; scrollbar-width: none; }
-        .banner-slider::-webkit-scrollbar { display: none; }
-        .banner-item { min-width: 90%; height: 140px; border-radius: 12px; background: linear-gradient(45deg, #1e2329, #00d2ff11); border: 1px solid rgba(0,210,255,0.1); scroll-snap-align: center; padding: 20px; }
+        /* 3. Live Radar - الرادار الميكانيكي */
+        .radar-bar { background: rgba(0, 210, 255, 0.03); padding: 8px 16px; display: flex; align-items: center; font-size: 11px; border-top: 1px solid rgba(255,255,255,0.02); }
+        .live-tag { background: var(--whale-neon); color: #000; font-weight: 900; padding: 2px 6px; border-radius: 4px; margin-left: 10px; }
 
-        /* 4. رادار السيولة (Marquee Stream) */
-        .radar-stream { background: rgba(0,210,255,0.05); padding: 8px 16px; border-y: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; font-size: 11px; }
-        .badge-live { background: var(--neon); color: #000; font-weight: 900; padding: 2px 6px; border-radius: 4px; margin-left: 10px; }
+        /* 4. Service Grid - شبكة الخدمات */
+        .services { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 20px 16px; border-bottom: 6px solid #000; }
+        .service { text-align: center; }
+        .service i { font-size: 22px; color: var(--whale-neon); margin-bottom: 8px; }
+        .service span { font-size: 11px; display: block; font-weight: bold; }
 
-        /* 5. شبكة الخدمات (Universal Grid) */
-        .grid-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 25px 16px; text-align: center; border-bottom: 8px solid #000; }
-        .grid-actions i { font-size: 24px; color: var(--neon); margin-bottom: 8px; }
-        .grid-actions span { font-size: 11px; display: block; }
-
-        /* 6. التبويبات المثبتة (Sticky Sub-Nav) */
-        .tabs-nav {
-            position: sticky; top: 0; z-index: 900; background: var(--bg);
+        /* 5. Market Tabs - تبويبات بايننس المثبتة */
+        .market-tabs {
+            position: sticky; top: 50px; z-index: 950; background: var(--binance-bg);
             display: flex; gap: 20px; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,0.05);
             overflow-x: auto; scrollbar-width: none;
         }
-        .tab-trigger { padding: 15px 0; font-size: 14px; font-weight: 900; color: var(--text-gray); white-space: nowrap; border-bottom: 2px solid transparent; }
-        .tab-trigger.active { color: var(--neon); border-bottom-color: var(--neon); }
+        .tab { padding: 15px 0; font-size: 14px; font-weight: bold; color: var(--text-gray); white-space: nowrap; border-bottom: 2px solid transparent; cursor: pointer; }
+        .tab.active { color: var(--whale-neon); border-bottom-color: var(--whale-neon); }
 
-        /* 7. قائمة الأسواق (Market List Template) */
-        .market-list { padding: 8px 16px; }
-        .asset-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        .asset-info { display: flex; align-items: center; gap: 12px; }
-        .asset-logo { width: 32px; height: 32px; border-radius: 50%; }
-        
-        .asset-price { text-align: left; flex: 1; padding-left: 20px; }
-        .price-main { font-size: 16px; font-weight: 900; }
-        
-        .change-box { width: 80px; height: 35px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; }
-        .up { background: rgba(14,203,129,0.15); color: var(--up); }
+        /* 6. Deep Market Feed - قائمة الأسواق العميقة */
+        .market-feed { padding: 10px 16px 120px 16px; }
+        .coin-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        .coin-info { display: flex; align-items: center; gap: 12px; }
+        .coin-logo { width: 32px; height: 32px; }
+        .price-col { text-align: left; flex: 1; padding-left: 20px; }
+        .price-now { font-size: 16px; font-weight: 900; }
+        .price-change { width: 80px; padding: 10px 0; border-radius: 4px; text-align: center; font-weight: 900; background: rgba(14,203,129,0.15); color: var(--up); }
 
-        /* 8. القائمة الجانبية (The Hidden Depth) */
-        .drawer { position: fixed; top: 0; right: -100%; width: 85%; height: 100%; background: var(--bg); z-index: 2000; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 1px solid var(--neon); padding: 50px 20px; }
-        .drawer.open { right: 0; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1500; display: none; }
-
-        /* 9. الفوتر (Universal Bottom Bar) */
-        .footer-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: var(--bg); border-top: 1px solid rgba(255,255,255,0.05); display: grid; grid-template-columns: repeat(5, 1fr); z-index: 1000; }
-        .nav-link { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: var(--text-gray); text-decoration: none; }
-        .nav-link.active { color: #fff; }
-        .nav-link i { font-size: 20px; margin-bottom: 4px; }
+        /* 7. Navigation - الفوتر خماسي الأبعاد */
+        .footer {
+            position: fixed; bottom: 0; width: 100%; height: 70px;
+            background: var(--binance-bg); border-top: 1px solid rgba(255,255,255,0.05);
+            display: grid; grid-template-columns: repeat(5, 1fr); z-index: 2000;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-gray); text-decoration: none; font-size: 10px; font-weight: bold; }
+        .nav-item.active { color: #fff; }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
-    <div class="drawer" id="sideDrawer">
-        <h2 style="color:var(--neon); margin-bottom:30px;">الملف الشخصي</h2>
-        <div style="display:flex; flex-direction:column; gap:20px;">
-            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--surface); padding-bottom:15px;">الإعدادات <i class="fas fa-cog"></i></div>
-            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--surface); padding-bottom:15px;">الأمان <i class="fas fa-shield-alt"></i></div>
-        </div>
-    </div>
-
-    <header class="header-fixed">
-        <div onclick="openMenu()"><i class="fas fa-user-circle" style="font-size:24px; color:var(--neon)"></i></div>
-        <div class="search-container"><i class="fas fa-search"></i> ابحث عن الحيتان...</div>
-        <i class="fas fa-bell" style="color:var(--text-gray); font-size:20px;"></i>
+    <header>
+        <div class="user-icon"><i class="fas fa-user"></i></div>
+        <div class="search-bar"><i class="fas fa-search"></i> ابحث عن الحيتان...</div>
+        <div style="display:flex; gap:15px; color:var(--text-gray);"><i class="fas fa-qrcode"></i><i class="fas fa-bell"></i></div>
     </header>
 
-    <div class="viewport">
-        <div class="banner-slider">
-            <div class="banner-item"><h3>WhaleMind AI</h3><p style="color:var(--text-gray); font-size:12px;">نظام الرادار المتقدم v2.0</p></div>
-            <div class="banner-item"><h3>Alpha Channels</h3><p style="color:var(--text-gray); font-size:12px;">انضم للقناة المدفوعة الآن</p></div>
+    <div class="banners">
+        <div class="banner">
+            <h3 style="color:var(--whale-neon)">WhaleMind Pro</h3>
+            <p style="font-size:12px; color:var(--text-gray); margin-top:5px;">رادار السيولة v2.0 متصل الآن</p>
         </div>
-
-        <div class="radar-stream">
-            <span class="badge-live">LIVE</span>
-            <marquee style="font-weight:900; color:var(--neon)">رصد دخول سيولة ضخمة على BTC .. 50M USDT .. تجميع حيتان مؤكد ..</marquee>
-        </div>
-
-        <section class="grid-actions">
-            <div class="action"><i class="fas fa-robot"></i><span>بوت آلي</span></div>
-            <div class="action"><i class="fas fa-satellite-dish"></i><span>الرادار</span></div>
-            <div class="action"><i class="fas fa-brain"></i><span>الألفا</span></div>
-            <div class="action"><i class="fas fa-ellipsis-h"></i><span>المزيد</span></div>
-        </section>
-
-        <nav class="tabs-nav">
-            <div class="tab-trigger active">المفضلة</div>
-            <div class="tab-trigger">الرائجة</div>
-            <div class="tab-trigger">جديدة</div>
-            <div class="tab-trigger">حجم 24س</div>
-        </nav>
-
-        <main class="market-list">
-            <div class="asset-row">
-                <div class="asset-info">
-                    <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" class="asset-logo">
-                    <div><div style="font-weight:900;">BTC <span style="font-size:10px; color:var(--text-gray)">/ USDT</span></div><div style="font-size:11px; color:var(--text-gray)">Vol 45.2B</div></div>
-                </div>
-                <div class="asset-price"><div class="price-main">64,520.10</div><div style="font-size:10px; color:var(--text-gray)">$64,520.10</div></div>
-                <div class="change-box up">+2.45%</div>
-            </div>
-            </main>
     </div>
 
-    <nav class="footer-nav">
-        <a href="#" class="nav-link active"><i class="fas fa-home"></i><span>الرئيسية</span></a>
-        <a href="#" class="nav-link"><i class="fas fa-chart-line"></i><span>الأسواق</span></a>
-        <a href="#" class="nav-link"><i class="fas fa-exchange-alt"></i><span>تداول</span></a>
-        <a href="#" class="nav-link"><i class="fas fa-bolt"></i><span>العقود</span></a>
-        <a href="#" class="nav-link"><i class="fas fa-wallet"></i><span>المحفظة</span></a>
+    <div class="radar-bar">
+        <span class="live-tag">LIVE</span>
+        <marquee style="font-weight:900; color:var(--whale-neon)">رصد تجميع حيتان ضخم على عملة BTC .. سيولة +50M USDT ..</marquee>
+    </div>
+
+    <section class="services">
+        <div class="service"><i class="fas fa-robot"></i><span>بوت آلي</span></div>
+        <div class="service"><i class="fas fa-satellite-dish"></i><span>الرادار</span></div>
+        <div class="service"><i class="fas fa-brain"></i><span>الألفا</span></div>
+        <div class="service"><i class="fas fa-ellipsis-h"></i><span>المزيد</span></div>
+    </section>
+
+    <nav class="market-tabs">
+        <div class="tab active">المفضلة</div>
+        <div class="tab">الرائجة</div>
+        <div class="tab">جديدة</div>
+        <div class="tab">حجم 24س</div>
     </nav>
 
-    <script>
-        function openMenu() { document.getElementById('sideDrawer').classList.add('open'); document.getElementById('overlay').style.display = 'block'; }
-        function closeMenu() { document.getElementById('sideDrawer').classList.remove('open'); document.getElementById('overlay').style.display = 'none'; }
-    </script>
+    <main class="market-feed">
+        <div class="coin-row">
+            <div class="coin-info">
+                <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" class="coin-logo">
+                <div><div style="font-weight:900;">BTC <span style="font-size:10px; color:var(--text-gray)">/ USDT</span></div><div style="font-size:11px; color:var(--text-gray);">Vol 45.2B</div></div>
+            </div>
+            <div class="price-col"><div class="price-now">64,520.10</div><div style="font-size:10px; color:var(--text-gray);">$64,520.10</div></div>
+            <div class="price-change">+2.45%</div>
+        </div>
+    </main>
+
+    <nav class="footer">
+        <a href="#" class="nav-item active"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-chart-line"></i><span>الأسواق</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-exchange-alt"></i><span>تداول</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-bolt"></i><span>العقود</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-wallet"></i><span>المحفظة</span></a>
+    </nav>
+
 </body>
 </html>
