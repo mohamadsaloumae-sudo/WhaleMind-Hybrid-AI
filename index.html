@@ -3,135 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhaleMind AI | Hybrid Terminal</title>
+    <title>WhaleMind AI | Hybrid Global Terminal</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ccxt@4.2.0/dist/ccxt.browser.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
 
     <style>
-        /* الالتزام الكامل بالهوية: أسود ملكي ونيون أزرق */
         :root {
-            --bg-deep: #0b0e11; 
-            --panel: #181a20;
-            --neon-blue: #00d2ff;
-            --text-main: #eaecef;
-            --text-dim: #848e9c;
-            --border: #2b3139;
-            --green: #0ecb81;
-            --red: #f6465d;
+            --bg-deep: #0b0e11; --panel: #181a20; --neon-blue: #00d2ff;
+            --text-main: #eaecef; --text-dim: #848e9c; --border: #2b3139;
+            --green: #0ecb81; --red: #f6465d;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-deep); color: var(--text-main); height: 100vh; overflow: hidden; }
-
         .app-shell { display: flex; flex-direction: column; height: 100vh; }
 
-        /* الهيدر العالمي */
-        header {
-            height: 60px; border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
-        }
+        header { height: 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 15px; }
 
-        /* حاوية الطبقات (Layers) */
         #viewport { flex: 1; overflow-y: auto; position: relative; }
         .page-layer { display: none; height: 100%; padding: 15px; overflow-y: auto; }
         .page-layer.active { display: block; animation: fadeIn 0.3s ease; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* محرك TradingView */
-        #tv-chart-container {
-            height: 350px; width: 100%; background: var(--panel);
-            border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px;
-        }
+        #tv-chart-container { height: 320px; width: 100%; background: var(--panel); border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
 
-        /* البار السفلي العالمي (الخمسة أزرار) */
-        footer {
-            height: 70px; background: var(--panel); border-top: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-around;
-        }
-        .nav-link { flex: 1; display: flex; flex-direction: column; align-items: center; color: var(--text-dim); cursor: pointer; transition: 0.3s; font-size: 10px; }
+        footer { height: 70px; background: var(--panel); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-around; }
+        .nav-link { flex: 1; display: flex; flex-direction: column; align-items: center; color: var(--text-dim); cursor: pointer; font-size: 10px; }
         .nav-link.active { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
         .nav-link i { font-size: 22px; margin-bottom: 4px; }
 
-        /* السوشيال والدردشة */
         .chat-room { background: var(--panel); padding: 15px; border-radius: 12px; border-right: 3px solid var(--neon-blue); margin-bottom: 10px; }
+        .whale-alert { color: var(--neon-blue); font-weight: bold; border: 1px solid var(--neon-blue); animation: glow 1.5s infinite alternate; }
+        @keyframes glow { from { box-shadow: 0 0 5px var(--neon-blue); } to { box-shadow: 0 0 15px var(--neon-blue); } }
+        
+        .btn-neon { width: 100%; padding: 15px; background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn-neon:hover { background: var(--neon-blue); color: #000; }
     </style>
 </head>
 <body>
 
 <div class="app-shell">
     <header>
-        <div onclick="toggleMenu()"><i class="fas fa-bars fa-lg"></i></div>
-        <div style="font-weight:bold; font-size:20px;">WhaleMind <span style="color:var(--neon-blue)">AI</span></div>
-        <div id="system-status" style="font-size:10px; color:var(--neon-blue)">نظام مركزي نشط</div>
+        <div><i class="fas fa-bars fa-lg"></i></div>
+        <div style="font-weight:bold; font-size:18px;">WhaleMind <span style="color:var(--neon-blue)">AI</span></div>
+        <div id="system-status" style="font-size:10px; color:var(--neon-blue)">جسر هجين متصل</div>
     </header>
 
     <main id="viewport">
         <section id="home-layer" class="page-layer active">
             <div id="tv-chart-container"></div>
-            <h4>الأسواق المباشرة</h4>
+            <div style="padding: 10px; background: var(--panel); border-radius: 10px;">
+                <p style="font-size: 12px; color: var(--text-dim);">رصيد المحفظة الموحد</p>
+                <h2 id="total-balance">$0.00</h2>
+            </div>
             <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px solid var(--border)">
-                <span>BTC/USDT</span><span id="price-btc" style="color:var(--green)">$0.00</span>
+                <span>Bitcoin</span><span id="price-btcusdt" style="color:var(--green)">$0.00</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px solid var(--border)">
+                <span>Ethereum</span><span id="price-ethusdt" style="color:var(--green)">$0.00</span>
             </div>
         </section>
 
         <section id="social-layer" class="page-layer">
-            <h3>غرف الدردشة العالمية</h3>
-            <div class="chat-room"><b>رادار الحيتان:</b> حركة سيولة فوق 5M$ تم رصدها الآن!</div>
-            <div class="chat-room"><b>مناقشات BTC:</b> 245 عضو نشط حالياً.</div>
+            <h3>رادار السيولة الضخمة</h3>
+            <div id="whale-feed">
+                <div class="chat-room">📡 بانتظار رصد تحركات الحيتان...</div>
+            </div>
         </section>
 
         <section id="trade-layer" class="page-layer">
-            <h3>تنفيذ هجين (CEX/DEX)</h3>
-            <button onclick="WhaleMindBridge.switchSystem('CEX')" style="width:100%; padding:15px; background:var(--neon-blue); border:none; margin-top:20px; border-radius:8px; font-weight:bold;">تحويل لنظام CEX</button>
-            <button onclick="WhaleMindBridge.switchSystem('DEX')" style="width:100%; padding:15px; background:var(--panel); border:1px solid var(--neon-blue); color:var(--neon-blue); margin-top:10px; border-radius:8px;">تحويل لنظام DEX</button>
+            <h3>مركز الربط العالمي</h3>
+            <button class="btn-neon" onclick="WhaleMindBridge.connectWallet()">
+                <i class="fas fa-wallet"></i> ربط محفظة Web3
+            </button>
+            <button class="btn-neon" onclick="WhaleMindBridge.switchSystem('CEX')">
+                <i class="fas fa-university"></i> تفعيل جسر CEX (CCXT)
+            </button>
+            <button class="btn-neon" onclick="WhaleMindBridge.switchSystem('DEX')">
+                <i class="fas fa-link"></i> تفعيل جسر DEX
+            </button>
         </section>
     </main>
 
     <footer>
         <div class="nav-link active" onclick="navigateToLayer('home-layer', this)"><i class="fas fa-home"></i><span>الرئيسية</span></div>
-        <div class="nav-link" onclick="navigateToLayer('social-layer', this)"><i class="fas fa-users"></i><span>سوشيال</span></div>
+        <div class="nav-link" onclick="navigateToLayer('social-layer', this)"><i class="fas fa-satellite-dish"></i><span>الرادار</span></div>
         <div class="nav-link" onclick="navigateToLayer('trade-layer', this)"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
-        <div class="nav-link" onclick="navigateToLayer('home-layer', this)"><i class="fas fa-bolt"></i><span>عقود</span></div>
-        <div class="nav-link" onclick="navigateToLayer('home-layer', this)"><i class="fas fa-wallet"></i><span>المحفظة</span></div>
+        <div class="nav-link" onclick="navigateToLayer('trade-layer', this)"><i class="fas fa-bolt"></i><span>المزيد</span></div>
     </footer>
 </div>
 
 <script>
-    // 1. محرك التبديل والجسور (WhaleMind Bridge Control)
     const WhaleMindBridge = {
-        currentEngine: 'CEX',
+        socket: null,
         chartSeries: null,
+        symbols: ['btcusdt', 'ethusdt'],
 
-        switchSystem: function(type) {
-            this.currentEngine = type;
-            const status = document.getElementById('system-status');
-            status.innerText = (type === 'CEX') ? "نظام مركزي نشط" : "نظام لامركزي نشط";
-            status.style.color = (type === 'CEX') ? "#00d2ff" : "#0ecb81";
-            alert("تم تحويل الجسر إلى: " + type);
+        // 1. تشغيل الرادار والأسعار الحية (WebSocket Bridge)
+        initLiveFeed: function() {
+            const streams = this.symbols.map(s => `${s}@ticker`).join('/');
+            this.socket = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}/btcusdt@aggTrade`);
+
+            this.socket.onmessage = (event) => {
+                const msg = JSON.parse(event.data);
+                if (msg.data.e === '24hrTicker') this.updatePriceUI(msg.data.s, msg.data.c);
+                if (msg.data.e === 'aggTrade') {
+                    const value = parseFloat(msg.data.p) * parseFloat(msg.data.q);
+                    if (value > 500000) this.pushWhaleAlert(msg.data.s, value);
+                }
+            };
         },
 
+        updatePriceUI: function(symbol, price) {
+            const el = document.getElementById(`price-${symbol.toLowerCase()}`);
+            if (el) el.innerText = `$${parseFloat(price).toLocaleString()}`;
+        },
+
+        pushWhaleAlert: function(symbol, value) {
+            const feed = document.getElementById('whale-feed');
+            const div = document.createElement('div');
+            div.className = 'chat-room whale-alert';
+            div.innerHTML = `🐋 حوت رصد: دخول $${(value/1000000).toFixed(2)}M في ${symbol}`;
+            feed.prepend(div);
+        },
+
+        // 2. محرك الشارت العالمي (TradingView Bridge)
         initChart: function() {
             const container = document.getElementById('tv-chart-container');
             const chart = LightweightCharts.createChart(container, {
                 layout: { backgroundColor: '#181a20', textColor: '#d1d4dc' },
                 grid: { vertLines: { color: '#2b3139' }, horzLines: { color: '#2b3139' } },
-                crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
             });
-            this.chartSeries = chart.addCandlestickSeries({
-                upColor: '#0ecb81', downColor: '#f6465d', borderVisible: false,
-                wickUpColor: '#0ecb81', wickDownColor: '#f6465d',
-            });
-            // بيانات تجريبية للمحرك
-            this.chartSeries.setData([
-                { time: '2023-12-22', open: 44000, high: 44500, low: 43800, close: 44200 },
-                { time: '2023-12-23', open: 44200, high: 45000, low: 44100, close: 44800 },
-            ]);
+            this.chartSeries = chart.addCandlestickSeries({ upColor: '#0ecb81', downColor: '#f6465d' });
+        },
+
+        // 3. جسر المحافظ (Web3/Ethers Bridge)
+        connectWallet: async function() {
+            if (window.ethereum) {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                const signer = provider.getSigner();
+                const address = await signer.getAddress();
+                document.getElementById('system-status').innerText = `متصل: ${address.substring(0,6)}...`;
+                alert("تم ربط محفظة Web3 بنجاح");
+            } else {
+                alert("يرجى تثبيت MetaMask");
+            }
+        },
+
+        switchSystem: function(type) {
+            document.getElementById('system-status').innerText = `نظام ${type} نشط`;
+            console.log(`تم تحويل المحرك لـ ${type} عبر مكتبة CCXT`);
         }
     };
 
-    // 2. تفعيل التنقل بين الطبقات (Navigate)
     function navigateToLayer(layerId, btn) {
         document.querySelectorAll('.page-layer').forEach(l => l.classList.remove('active'));
         document.getElementById(layerId).classList.add('active');
@@ -139,11 +168,10 @@
         btn.classList.add('active');
     }
 
-    // 3. تشغيل المحركات عند التحميل
     window.onload = () => {
         WhaleMindBridge.initChart();
+        WhaleMindBridge.initLiveFeed();
     };
 </script>
-
 </body>
 </html>
