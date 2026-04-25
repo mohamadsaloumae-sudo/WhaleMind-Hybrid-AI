@@ -1,38 +1,54 @@
-    // --- عملية الحقن لربط الجسور ---
-    window.onload = () => {
-        WhaleMindBridge.initChart();
-        WhaleMindBridge.initLiveFeed();
-
-        // فحص حالة الجسر مع الدماغ (API Bridge)
-        fetch('/api/status')
-            .then(res => res.json())
-            .then(data => {
+    // --- محرك الحقن النبضي (Titanium Heartbeat) ---
+    const WhaleMindUI = {
+        // دالة تحديث البيانات من الدماغ
+        refreshData: async function() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
                 if(data.status === "ONLINE") {
+                    // 1. تحديث حالة النظام
                     const statusEl = document.getElementById('system-status');
-                    statusEl.innerText = "🟢 " + data.version + " متصل";
+                    statusEl.innerText = "🟢 " + (data.version || "Titanium 60") + " متصل";
                     statusEl.style.color = "var(--green)";
-                    
-                    // حقن بيانات الرادار القادمة من الدماغ
-                    if(data.whale_radar) {
+
+                    // 2. تحديث رادار الحيتان (إظهار كل شيء)
+                    if(data.whale_radar && data.whale_radar.length > 0) {
                         const feed = document.getElementById('whale-feed');
+                        // تنظيف الرسائل القديمة "بانتظار الرصد" فقط في أول مرة
+                        if(feed.innerText.includes("بانتظار")) feed.innerHTML = ''; 
+                        
                         data.whale_radar.forEach(alert => {
-                            const div = document.createElement('div');
-                            div.className = 'chat-room whale-alert';
-                            div.innerHTML = `🐋 رصد ذكي: ${alert.pair} بقيمة ${alert.amount} (${alert.type})`;
-                            feed.prepend(div);
+                            // منع التكرار: إذا كان التنبيه موجوداً لا تضفه مرة أخرى
+                            const alertId = `alert-${alert.pair}-${alert.amount}`;
+                            if(!document.getElementById(alertId)) {
+                                const div = document.createElement('div');
+                                div.id = alertId;
+                                div.className = 'chat-room whale-alert';
+                                div.innerHTML = `🐋 رصد ذكي: ${alert.pair} بقيمة ${alert.amount} (${alert.type})`;
+                                feed.prepend(div);
+                            }
                         });
                     }
                 }
-            })
-            .catch(err => {
-                const statusEl = document.getElementById('system-status');
-                statusEl.innerText = "🔴 عطل في جسر البيانات (X)";
-                statusEl.style.color = "var(--red)";
-                console.error("Bridge Error:", err);
-            });
+            } catch (err) {
+                console.log("🔄 الجسر يحاول إعادة الاتصال بالدماغ...");
+                document.getElementById('system-status').innerText = "🟠 جاري مزامنة الدماغ...";
+            }
+        }
+    };
 
-        // تشغيل محرك الروبوت إذا كان ملف bridge.js جاهزاً
-        if (typeof WhaleMindBot !== 'undefined' && WhaleMindBot.activateEngine) {
+    window.onload = () => {
+        // تشغيل الرسوم البيانية والبث المباشر لباينانس (الخارج)
+        WhaleMindBridge.initChart();
+        WhaleMindBridge.initLiveFeed();
+
+        // تفعيل النبض: تحديث الواجهة كل 3 ثوانٍ
+        WhaleMindUI.refreshData(); // تشغيل فوري
+        setInterval(WhaleMindUI.refreshData, 3000); 
+
+        // تشغيل المنطق الداخلي للجسر
+        if (typeof WhaleMindBot !== 'undefined') {
             WhaleMindBot.activateEngine();
         }
     };
