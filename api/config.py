@@ -1,12 +1,29 @@
-# WhaleMind AI - Global Configuration
+# WhaleMind AI - Master Configuration Hub
 class BaseConfig:
+    # --- إعدادات النظام الأساسية ---
     VERSION = "60.0.1 Titanium"
-    ADMIN_FEE_USDT = 5000
-    WHALE_THRESHOLD_USD = 5000000  # 5 مليون دولار
-    SUPPORTED_NETWORKS = ["ERC20", "BEP20", "SOLANA"]
+    ENVIRONMENT = "production"
     
-    # روابط السيرفرات (RPC Nodes) للربط اللامركزي مستقبلاً
+    # --- رادار الحيتان (Whale Radar) ---
+    WHALE_THRESHOLD_USD = 5000000  # فلتر الـ 5 مليون دولار (لا يتم رصد ما هو أقل)
+    ALERT_COLOR = "#00d2ff"        // لون النيون الخاص بالتنبيهات
+    
+    # --- البيانات المالية والتحصيل (TRC20) ---
+    # هذا العنوان هو الذي سيظهر للمستخدمين لإرسال الـ 10%
+    ADMIN_WALLET_TRC20 = "TRSKhB9Fvvw6SM8QpK2vep4XqN6gyXDQ9V"
+    COMMISSION_RATE = 0.10  # نسبة الـ 10% من الأرباح
+    
+    # --- الشبكات المدعومة ---
+    SUPPORTED_NETWORKS = ["TRC20", "ERC20", "BEP20", "SOLANA"]
+    
+    # --- البنية التحتية اللامركزية (RPC Nodes) ---
+    # روابط السيرفرات للربط اللامركزي مستقبلاً (Alchemy & Public Nodes)
     NODES = {
         "ETH": "https://eth-mainnet.g.alchemy.com/v2/your-api-key",
-        "BSC": "https://bsc-dataseed.binance.org/"
+        "BSC": "https://bsc-dataseed.binance.org/",
+        "TRON": "https://api.trongrid.io"
     }
+
+# حقن إضافي لسهولة الاستدعاء في engine.py
+Config = BaseConfig()
+
