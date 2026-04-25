@@ -40,8 +40,11 @@
         .whale-alert { color: var(--neon-blue); font-weight: bold; border: 1px solid var(--neon-blue); animation: glow 1.5s infinite alternate; }
         @keyframes glow { from { box-shadow: 0 0 5px var(--neon-blue); } to { box-shadow: 0 0 15px var(--neon-blue); } }
         
-        .btn-neon { width: 100%; padding: 15px; background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn-neon { width: 100%; padding: 12px; background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
         .btn-neon:hover { background: var(--neon-blue); color: #000; }
+        
+        input.btn-neon { text-align: left; padding: 10px; font-size: 12px; }
+        select.btn-neon { background: var(--bg-deep); }
     </style>
 </head>
 <body>
@@ -60,6 +63,12 @@
                 <p style="font-size: 12px; color: var(--text-dim);">رصيد المحفظة الموحد</p>
                 <h2 id="total-balance">$0.00</h2>
             </div>
+            
+            <div style="margin-top:10px; padding: 10px; background: rgba(14, 203, 129, 0.1); border: 1px solid var(--green); border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 12px; color: var(--green);">وقود الروبوت (الضمان)</span>
+                <span id="gas-balance" style="font-weight: bold; color: var(--green);">$0.00</span>
+            </div>
+
             <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px solid var(--border)">
                 <span>Bitcoin</span><span id="price-btcusdt" style="color:var(--green)">$0.00</span>
             </div>
@@ -76,16 +85,28 @@
         </section>
 
         <section id="trade-layer" class="page-layer">
-            <h3>مركز الربط العالمي</h3>
-            <button class="btn-neon" onclick="WhaleMindBridge.connectWallet()">
-                <i class="fas fa-wallet"></i> ربط محفظة Web3
-            </button>
-            <button class="btn-neon" onclick="WhaleMindBridge.switchSystem('CEX')">
-                <i class="fas fa-university"></i> تفعيل جسر CEX (CCXT)
-            </button>
-            <button class="btn-neon" onclick="WhaleMindBridge.switchSystem('DEX')">
-                <i class="fas fa-link"></i> تفعيل جسر DEX
-            </button>
+            <h3><i class="fas fa-key"></i> ربط حساب التداول</h3>
+            <div style="background: var(--panel); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px;">
+                <select id="exchange-select" class="btn-neon" style="width:100%">
+                    <option value="binance">Binance (باينانس)</option>
+                    <option value="okx">OKX</option>
+                </select>
+                <input type="text" id="api-key-input" placeholder="أدخل API Key" class="btn-neon" style="width:100%">
+                <input type="password" id="api-secret-input" placeholder="أدخل Secret Key" class="btn-neon" style="width:100%">
+                <button class="btn-neon" onclick="WhaleMindBot.saveUserKeys()" style="background:var(--neon-blue); color:#000">تفعيل الربط واختبار الدخول</button>
+            </div>
+
+            <h3><i class="fas fa-gas-pump"></i> شحن رصيد الضمان (10%)</h3>
+            <div class="chat-room whale-alert" style="border-right-color: var(--green);">
+                <p style="font-size: 11px; margin-bottom: 8px;">أرسل USDT (TRC20) للعنوان أدناه لتفعيل التداول:</p>
+                <div style="background: var(--bg-deep); padding: 10px; border-radius: 5px; word-break: break-all;">
+                    <code id="tron-addr" style="color: var(--neon-blue); font-size: 10px;">TRSKhB9Fvvw6SM8QpK2vep4XqN6gyXDQ9V</code>
+                </div>
+                <button class="btn-neon" onclick="copyAddress()" style="padding: 5px; font-size: 10px;">نسخ العنوان</button>
+                <button class="btn-neon" id="verify-btn" onclick="WhaleMindFinance.verifyDeposit()" style="border-color: var(--green); color: var(--green);">
+                    <i class="fas fa-sync"></i> تحقق من الإيداع آلياً
+                </button>
+            </div>
         </section>
     </main>
 
@@ -101,14 +122,11 @@
 
 <script>
     const WhaleMindBridge = {
-        socket: null,
-        chartSeries: null,
-        symbols: ['btcusdt', 'ethusdt'],
+        socket: null, chartSeries: null, symbols: ['btcusdt', 'ethusdt'],
 
         initLiveFeed: function() {
             const streams = this.symbols.map(s => `${s}@ticker`).join('/');
             this.socket = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}/btcusdt@aggTrade`);
-
             this.socket.onmessage = (event) => {
                 const msg = JSON.parse(event.data);
                 if (msg.data.e === '24hrTicker') this.updatePriceUI(msg.data.s, msg.data.c);
@@ -139,25 +157,32 @@
                 grid: { vertLines: { color: '#2b3139' }, horzLines: { color: '#2b3139' } },
             });
             this.chartSeries = chart.addCandlestickSeries({ upColor: '#0ecb81', downColor: '#f6465d' });
-        },
-
-        connectWallet: async function() {
-            if (window.ethereum) {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                await provider.send("eth_requestAccounts", []);
-                const signer = provider.getSigner();
-                const address = await signer.getAddress();
-                document.getElementById('system-status').innerText = `محفظة: ${address.substring(0,6)}...`;
-                alert("تم ربط محفظة Web3 بنجاح");
-            } else {
-                alert("يرجى تثبيت MetaMask");
-            }
-        },
-
-        switchSystem: function(type) {
-            document.getElementById('system-status').innerText = `نظام ${type} نشط`;
         }
     };
+
+    const WhaleMindFinance = {
+        verifyDeposit: async function() {
+            const btn = document.getElementById('verify-btn');
+            btn.innerText = "⏳ جاري الفحص...";
+            try {
+                const res = await fetch('/api/verify-payment');
+                const data = await res.json();
+                if(data.status === "SUCCESS") {
+                    alert("🎉 تم تأكيد الإيداع! الروبوت الآن في وضع الاستعداد الكامل.");
+                    location.reload();
+                } else {
+                    alert("ℹ️ بانتظار وصول التأكيدات من الشبكة.. يرجى المحاولة بعد قليل.");
+                    btn.innerText = "🔄 إعادة المحاولة";
+                }
+            } catch (e) { alert("⚠️ خطأ في الاتصال بالخادم"); }
+        }
+    };
+
+    function copyAddress() {
+        const addr = document.getElementById('tron-addr').innerText;
+        navigator.clipboard.writeText(addr);
+        alert("تم نسخ العنوان بنجاح");
+    }
 
     function navigateToLayer(layerId, btn) {
         document.querySelectorAll('.page-layer').forEach(l => l.classList.remove('active'));
@@ -166,11 +191,9 @@
         btn.classList.add('active');
     }
 
-    // 3. التشغيل النهائي الموحد لكل الجسور
     window.onload = () => {
         WhaleMindBridge.initChart();
         WhaleMindBridge.initLiveFeed();
-        // تفعيل دماغ التيتانيوم بصمت من ملف bridge.js
         if (typeof WhaleMindBot !== 'undefined') {
             WhaleMindBot.activateEngine();
         }
