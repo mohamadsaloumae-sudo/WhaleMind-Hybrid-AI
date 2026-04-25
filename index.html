@@ -3,112 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhaleMind Terminal</title>
+    <title>WhaleMind Hybrid Terminal</title>
+    <script src="https://s3.tradingview.com/tv.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --bg: #0b0e11; --nav-bg: #181a20; --accent: #fcd535; --text: #eaecef; --secondary: #707a8a; --border: #2b3139; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', Roboto, sans-serif; overflow: hidden; }
-
-        /* منطقة المحتوى المتغير */
-        .viewport { height: calc(100vh - 65px); overflow-y: auto; }
-        .page { display: none; }
-        .active-page { display: block; }
-
-        /* الأزرار الخمسة الاستاندرد */
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; height: 65px;
-            background: var(--nav-bg); border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
-        }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--secondary); cursor: pointer; font-size: 11px; flex: 1; transition: 0.2s; }
-        .nav-item i { font-size: 20px; margin-bottom: 4px; }
-        .nav-item.active { color: var(--accent); }
-
-        /* ستايل المنصات (الكروت) */
-        .header-pro { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: var(--bg); }
-        .market-card { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .price-up { color: #0ecb81; font-weight: bold; }
+        :root { --accent: #fcd535; --bg: #0b0e11; --panel: #181a20; --border: #2b3139; --neon: #00d2ff; }
         
-        /* أزرار التداول */
-        .trade-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; }
-        .btn-buy { background: #0ecb81; color: #fff; padding: 12px; border-radius: 4px; text-align: center; font-weight: bold; cursor: pointer; }
-        .btn-sell { background: #f6465d; color: #fff; padding: 12px; border-radius: 4px; text-align: center; font-weight: bold; cursor: pointer; }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; height: 100vh; overflow: hidden; }
 
-        /* قسم الميزات (More) */
-        .more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 20px; text-align: center; font-size: 11px; }
-        .feature-icon { width: 40px; height: 40px; background: #2b3139; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; color: var(--accent); }
+        /* حاوية النظام المتجاوبة */
+        .app-container { display: flex; flex-direction: column; height: 100vh; }
+
+        /* الهيدر العلوي */
+        header { height: 50px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 15px; justify-content: space-between; }
+        .logo { font-weight: bold; font-size: 18px; color: var(--neon); font-family: sans-serif; }
+
+        /* منطقة المحتوى الرئيسية */
+        .main-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; }
+
+        /* نظام الكروت المتجاوب (Grid) */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        
+        /* إذا كانت الشاشة كبيرة (كمبيوتر/ايباد) تتوزع الكروت بجانب بعضها */
+        @media (min-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+            .chart-section { grid-column: span 2; }
+        }
+
+        /* كروت الربط (مركزي ولا مركزي) */
+        .connect-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 15px; transition: 0.3s; }
+        .connect-card:hover { border-color: var(--neon); }
+        .card-title { font-size: 14px; color: #848e9c; margin-bottom: 10px; }
+        
+        .btn-connect { width: 100%; padding: 10px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-cex { background: var(--accent); color: #000; }
+        .btn-dex { background: #3b82f6; color: #fff; }
+
+        /* محرك التداول */
+        #tv_chart_container { height: 400px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+
+        /* البار السفلي الاستاندرد */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 65px; background: var(--panel); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #848e9c; font-size: 11px; cursor: pointer; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+
     </style>
 </head>
 <body>
 
-<div class="viewport">
-    <div id="home" class="page active-page">
-        <div class="header-pro">
-            <div style="font-weight: bold; font-size: 18px;">WhaleMind</div>
-            <i class="fas fa-user-circle" style="font-size: 22px; color: var(--secondary);"></i>
-        </div>
-        <div class="more-grid">
-            <div><div class="feature-icon"><i class="fas fa-robot"></i></div>البوت الآلي</div>
-            <div><div class="feature-icon"><i class="fas fa-brain"></i></div>ذكاء هجين</div>
-            <div><div class="feature-icon"><i class="fas fa-copy"></i></div>نسخ الصفقات</div>
-            <div><div class="feature-icon"><i class="fas fa-ellipsis-h"></i></div>المزيد</div>
-        </div>
-        <div style="padding: 15px; font-weight: bold;">قائمة الرواج</div>
-        <div class="market-card"><div>BTC/USDT</div><div class="price-up">$69,420.50</div></div>
-        <div class="market-card"><div>ETH/USDT</div><div class="price-up">$3,480.12</div></div>
-    </div>
+<div class="app-container">
+    <header>
+        <div class="logo">WhaleMind <span style="color:#fff">AI</span></div>
+        <div style="font-size: 12px;"><i class="fas fa-circle" style="color:#0ecb81; font-size: 8px;"></i> نظام هجين متصل</div>
+    </header>
 
-    <div id="markets" class="page">
-        <div class="header-pro"><b>الأسواق</b></div>
-        <div class="market-card"><div>BTC</div><div class="price-up">+2.4%</div></div>
-        <div class="market-card"><div>ETH</div><div class="price-up">+1.8%</div></div>
-    </div>
-
-    <div id="trade" class="page">
-        <div class="header-pro"><b>تداول (سبوت)</b></div>
-        <div style="height: 200px; background: #161a1e; margin: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--secondary);">واجهة تداول العملات</div>
-        <div class="trade-btns"><div class="btn-buy">شراء</div><div class="btn-sell">بيع</div></div>
-    </div>
-
-    <div id="futures" class="page">
-        <div class="header-pro"><b>العقود الآجلة (فيوتشر)</b></div>
-        <div style="padding: 15px;">
-            <div style="background: #1e2329; padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent);">
-                <div style="font-size: 12px; color: var(--accent);">رادار الحيتان مفعّل</div>
-                <div style="font-size: 18px; margin-top: 5px;">احتمالية النجاح: 94%</div>
+    <div class="main-content">
+        <div class="dashboard-grid">
+            <div class="connect-card">
+                <div class="card-title"><i class="fas fa-building"></i> تداول مركزي (CEX)</div>
+                <div style="font-size: 12px;">اربط حساب Binance عبر API</div>
+                <button class="btn-connect btn-cex">ربط المنصة</button>
             </div>
-            <div class="trade-btns" style="margin-top: 20px;">
-                <div class="btn-buy" style="background:#0ecb81">شراء / صعود</div>
-                <div class="btn-sell" style="background:#f6465d">بيع / هبوط</div>
+
+            <div class="connect-card">
+                <div class="card-title"><i class="fas fa-wallet"></i> تداول لا مركزي (DEX)</div>
+                <div style="font-size: 12px;">اربط محفظة MetaMask / Trust</div>
+                <button class="btn-connect btn-dex">ربط المحفظة</button>
             </div>
+
+            <div class="chart-section" id="tv_chart_container"></div>
         </div>
     </div>
 
-    <div id="wallets" class="page">
-        <div class="header-pro"><b>المحفظة</b></div>
-        <div style="padding: 20px; text-align: center;">
-            <div style="color: var(--secondary); font-size: 14px;">إجمالي الرصيد المقدر</div>
-            <div style="font-size: 32px; font-weight: bold; margin: 10px 0;">0.000000 <span style="font-size: 14px;">BTC</span></div>
-        </div>
-    </div>
+    <nav class="bottom-nav">
+        <div class="nav-item active"><i class="fas fa-home"></i>الرئيسية</div>
+        <div class="nav-item"><i class="fas fa-chart-line"></i>الأسواق</div>
+        <div class="nav-item"><i class="fas fa-exchange-alt"></i>تداول</div>
+        <div class="nav-item"><i class="fas fa-bolt"></i>عقود</div>
+        <div class="nav-item"><i class="fas fa-wallet"></i>المحفظة</div>
+    </nav>
 </div>
 
-<nav class="bottom-nav">
-    <div class="nav-item active" onclick="navTo('home', this)"><i class="fas fa-home"></i>الرئيسية</div>
-    <div class="nav-item" onclick="navTo('markets', this)"><i class="fas fa-chart-line"></i>الأسواق</div>
-    <div class="nav-item" onclick="navTo('trade', this)"><i class="fas fa-exchange-alt"></i>تداول</div>
-    <div class="nav-item" onclick="navTo('futures', this)"><i class="fas fa-bolt"></i>العقود</div>
-    <div class="nav-item" onclick="navTo('wallets', this)"><i class="fas fa-wallet"></i>المحفظة</div>
-</nav>
-
 <script>
-    function navTo(pageId, el) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active-page');
-        el.classList.add('active');
-    }
+    // تشغيل المحرك العالمي مع إعدادات التجاوب
+    new TradingView.widget({
+        "autosize": true,
+        "symbol": "BINANCE:BTCUSDT",
+        "interval": "D",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "enable_publishing": false,
+        "hide_side_toolbar": false,
+        "allow_symbol_change": true,
+        "container_id": "tv_chart_container"
+    });
 </script>
+
 </body>
 </html>
 
