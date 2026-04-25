@@ -3,142 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhaleMind AI | The Future of Trading</title>
+    <title>WhaleMind AI | Global Hybrid Power</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Tajawal:wght@400;700;900&display=swap');
         
-        :root { --neon: #00e5ff; --deep: #000000; }
-
-        body, html { margin: 0; padding: 0; background: var(--deep); color: #fff; font-family: 'Tajawal', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
-
-        /* حاوية الخلفية المتحركة */
-        #particles-js {
-            position: fixed; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #001f24 0%, #000 80%);
-            z-index: -1;
+        :root {
+            --neon-blue: #00e5ff;
+            --deep-dark: #000205;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(0, 229, 255, 0.15);
         }
 
-        header {
+        body {
+            background-color: var(--deep-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.05) 0%, transparent 40%);
+            color: #fff;
+            font-family: 'Tajawal', sans-serif;
+            margin: 0; padding: 0; overflow-x: hidden;
+        }
+
+        /* نافبار "عائم" بنظام زجاجي */
+        nav {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 8%; background: rgba(0,0,0,0.8);
-            border-bottom: 1px solid rgba(0,229,255,0.15);
-            backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 1000;
+            padding: 15px 5%; background: rgba(0, 2, 5, 0.8);
+            backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border);
+            position: fixed; top: 0; width: 100%; z-index: 2000; box-sizing: border-box;
         }
 
-        .logo { font-weight: 900; font-size: 1.8rem; color: var(--neon); text-shadow: 0 0 15px var(--neon); letter-spacing: 2px; }
+        .brand { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.6rem; color: var(--neon-blue); letter-spacing: 3px; }
 
+        /* منطقة الـ Hero الرئيسية */
         .hero {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 95vh; text-align: center; padding: 0 10%;
+            position: relative; min-height: 100vh; display: flex; align-items: center;
+            justify-content: center; padding: 100px 5% 50px; text-align: center;
         }
 
-        /* صورة الحوت المركزية الفخمة */
-        .whale-core {
-            width: clamp(280px, 45vw, 550px);
-            filter: drop-shadow(0 0 40px rgba(0, 229, 255, 0.5));
-            margin-bottom: -30px;
-            animation: float 6s ease-in-out infinite;
+        /* الحوت كخلفية تفاعلية ضخمة */
+        .whale-bg {
+            position: absolute; width: 60%; max-width: 800px; opacity: 0.4;
+            filter: drop-shadow(0 0 50px var(--neon-blue)); z-index: -1;
+            animation: whaleFloat 8s ease-in-out infinite;
         }
 
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-25px); } }
+        @keyframes whaleFloat { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(2deg); } }
 
-        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; line-height: 1; margin: 0; text-transform: uppercase; }
-        .glitch-txt { position: relative; color: #fff; }
-        .glitch-txt span { color: var(--neon); text-shadow: 0 0 20px var(--neon); }
-
-        .description-box {
-            max-width: 850px; background: rgba(0, 229, 255, 0.03);
-            border: 1px solid rgba(0, 229, 255, 0.1); padding: 30px;
-            border-radius: 20px; margin-top: 40px; backdrop-filter: blur(5px);
-            font-size: 1.2rem; color: rgba(255,255,255,0.8); line-height: 1.8;
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 10vw, 6rem); font-weight: 900; line-height: 0.9;
+            margin-bottom: 20px; text-transform: uppercase;
         }
 
-        .cta-group { margin-top: 50px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
-        
-        .btn-neon {
-            padding: 20px 60px; background: var(--neon); color: #000;
-            font-weight: 900; border-radius: 50px; text-decoration: none;
-            box-shadow: 0 0 40px rgba(0, 229, 255, 0.4); font-size: 1.3rem;
-            transition: 0.4s;
-        }
-        .btn-neon:hover { transform: scale(1.1); box-shadow: 0 0 60px var(--neon); background: #fff; }
+        .highlight { color: var(--neon-blue); text-shadow: 0 0 30px var(--neon-blue); }
 
-        /* شبكة مميزات الذكاء الاصطناعي */
-        .features-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 100px 8%; }
-        .card {
-            background: rgba(10,10,15,0.7); border: 1px solid rgba(0,229,255,0.05);
-            padding: 40px; border-radius: 25px; text-align: center;
-            transition: 0.5s; cursor: pointer; position: relative; overflow: hidden;
+        .tagline {
+            font-size: clamp(1rem, 3vw, 1.4rem); color: rgba(255,255,255,0.6);
+            max-width: 700px; margin: 20px auto; line-height: 1.6;
         }
-        .card:hover { border-color: var(--neon); transform: translateY(-15px); background: rgba(0,229,255,0.02); }
-        .card img { width: 140px; margin-bottom: 25px; filter: drop-shadow(0 0 15px var(--neon)); }
 
-        @media (max-width: 768px) { h1 { font-size: 3rem; } .description-box { font-size: 1rem; } }
+        /* الأزرار بتقنية "Glow Depth" */
+        .cta-btn {
+            padding: 18px 45px; background: var(--neon-blue); color: #000;
+            text-decoration: none; font-weight: 900; border-radius: 4px;
+            font-size: 1.2rem; position: relative; overflow: hidden;
+            display: inline-block; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+        }
+
+        .cta-btn:hover { transform: scale(1.05); box-shadow: 0 0 50px var(--neon-blue); background: #fff; }
+
+        /* شبكة المنتجات (The Product Grid) */
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px; padding: 100px 8%;
+        }
+
+        .glass-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 40px; position: relative;
+            overflow: hidden; backdrop-filter: blur(10px); transition: 0.5s;
+        }
+
+        .glass-card:hover { background: rgba(0, 229, 255, 0.05); transform: translateY(-10px); border-color: var(--neon-blue); }
+
+        .card-icon { font-size: 3rem; color: var(--neon-blue); margin-bottom: 20px; }
+        .card-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 15px; }
+        .card-desc { color: #888; font-size: 1rem; line-height: 1.6; }
+
+        /* موبايل أوبتمايزيشن */
+        @media (max-width: 768px) {
+            .hero { padding-top: 150px; }
+            .grid-container { padding: 50px 5%; }
+            .whale-bg { width: 90%; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="particles-js"></div>
-
-    <header>
-        <div class="logo">WHALEMIND AI</div>
-        <div style="display:flex; gap:15px;">
-            <button style="background:none; border:1px solid #333; color:#fff; cursor:pointer; padding:5px 12px; border-radius:15px;">EN/AR</button>
-            <a href="2-login.html" style="color:var(--neon); text-decoration:none; font-weight:bold; align-self:center;">دخول</a>
+    <nav>
+        <div class="brand">WHALEMIND</div>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <a href="2-login.html" style="color: #fff; text-decoration: none; font-weight: bold; font-size: 0.9rem;">LOGIN</a>
+            <a href="3-register.html" class="cta-btn" style="padding: 8px 20px; font-size: 0.9rem;">JOIN NOW</a>
         </div>
-    </header>
+    </nav>
 
     <section class="hero">
-        <img src="https://i.ibb.co/vz6mD2V/whale-ai-logo.png" alt="Whale Core" class="whale-core">
+        <img src="https://i.ibb.co/vz6mD2V/whale-ai-logo.png" alt="Whale Core" class="whale-bg">
         
-        <h1 class="glitch-txt">نظام <span>تيتانيوم 60</span></h1>
-        
-        <div class="description-box">
-            أهلاً بك في فجر جديد للتداول. WhaleMind AI ليس مجرد تطبيق، بل هو **كيان ذكي** يدمج قوة الحوسبة الكمية مع رادار تتبع سيولة الحيتان. نحن نفكك شفرات السوق المعقدة، ونعيد صياغتها لك في دروس "المستشفى النفسي" لضبط انفعالاتك، وإشارات تداول تعتمد على حركة الملايين.
-        </div>
-
-        <div class="cta-group">
-            <a href="3-register.html" class="btn-neon">ابدأ سيادتك الآن</a>
+        <div class="hero-content">
+            <h1 class="reveal">WE TRACK<br><span class="highlight">GIANTS</span></h1>
+            <p class="tagline reveal">نظام تيتانيوم 60: المحرك الهجين الأول عالمياً الذي يدمج بين ذكاء رادار الحيتان وبروتوكولات الانضباط النفسي للسيطرة على الأسواق.</p>
+            <div class="reveal" style="margin-top: 40px;">
+                <a href="3-register.html" class="cta-btn">ابدأ التجربة الإمبراطورية</a>
+            </div>
         </div>
     </section>
 
-    <div class="features-section">
-        <div class="card">
-            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="AI Radar">
-            <h2 style="color:var(--neon)">رادار الحيتان</h2>
-            <p>روبوت مراقبة السيولة الضخمة. تتبع حركات +5,000,000$ لحظة بلحظة واعرف وجهة السعر القادمة قبل الجميع.</p>
+    <div class="grid-container">
+        <div class="glass-card reveal">
+            <div class="card-icon"><i class="fas fa-microchip"></i></div>
+            <div class="card-title">رادار السيولة</div>
+            <p class="card-desc">تتبع لحظي للمحافظ التي تضخ أكثر من 5 ملايين دولار. نظام تنبيهات ذكي يسبق حركة السعر ببيانات خام لا تعرف التخمين.</p>
         </div>
-        <div class="card">
-            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" alt="Academy Bot">
-            <h2 style="color:var(--neon)">أكاديمية الضبط</h2>
-            <p>من الصفر إلى الاحتراف. تعلم هندسة الشموع، وسيكولوجية الانضباط، واستراتيجيات "من أين تؤكل الكتف" بالفيديو.</p>
+
+        <div class="glass-card reveal">
+            <div class="card-icon"><i class="fas fa-brain"></i></div>
+            <div class="card-title">هندسة العقل</div>
+            <p class="card-desc">المستشفى النفسي لضبط الانفعالات. تعلم كيف يفكر الحوت وكيف تتداول بدم بارد عبر مناهج معتمدة دولياً.</p>
         </div>
-        <div class="card">
-            <img src="https://cdn-icons-png.flaticon.com/512/10444/10444265.png" alt="Wallet Bot">
-            <h2 style="color:var(--neon)">بوابة الإيداع</h2>
-            <p>نظام إيداع وسحب هجين وآمن. استلم أرباحك بضغطة زر واحدة عبر بروتوكولات تشفير عالمية.</p>
+
+        <div class="glass-card reveal">
+            <div class="card-icon"><i class="fas fa-shield-halved"></i></div>
+            <div class="card-title">بوابة السيادة</div>
+            <p class="card-desc">إيداع وسحب مركزي ولامركزي فوري. نظام حماية أموال المستخدم عبر بروتوكولات تشفير هي الأقوى في فئتها.</p>
         </div>
     </div>
 
     <script>
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#00e5ff" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5, "random": true },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#00e5ff", "opacity": 0.2, "width": 1 },
-                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
-            },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
-                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } } }
-            },
-            "retina_detect": true
+        // أنيميشن الظهور عند التمرير (مثل المواقع العالمية)
+        ScrollReveal().reveal('.reveal', {
+            delay: 300,
+            distance: '50px',
+            origin: 'bottom',
+            duration: 1000,
+            interval: 200
         });
     </script>
 </body>
