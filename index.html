@@ -1,50 +1,66 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhaleMind AI | Global Terminal</title>
+    <title>WhaleMind AI | الإمبراطورية</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;900&display=swap');
-        :root { --gold: #d4af37; --bg: #020204; --border: rgba(255,255,255,0.08); }
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;900&display=swap');
+        :root { --neon: #00e5ff; --bg: #000000; }
         body { background: var(--bg); color: #fff; font-family: 'Tajawal', sans-serif; margin: 0; }
-        nav { display: flex; justify-content: space-between; padding: 25px 5%; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(2,2,4,0.95); z-index: 100; }
-        .nav-links a { color: #888; text-decoration: none; margin: 0 15px; font-size: 14px; transition: 0.3s; }
-        .nav-links a:hover { color: var(--gold); }
-        .hero { padding: 150px 5%; text-align: center; background: radial-gradient(circle at center, #0a0a15 0%, #020204 100%); }
-        h1 { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 900; margin: 0; }
-        .btn { padding: 15px 40px; border-radius: 4px; display: inline-block; margin: 20px 10px; text-decoration: none; font-weight: bold; transition: 0.4s; }
-        .btn-gold { background: var(--gold); color: #000; }
-        .btn-outline { border: 1px solid var(--border); color: #fff; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 50px 5%; }
-        .card { background: rgba(255,255,255,0.02); padding: 40px; border: 1px solid var(--border); transition: 0.4s; }
-        .card:hover { border-color: var(--gold); background: rgba(255,255,255,0.05); }
+        
+        /* تأثير التوهج النيوني */
+        .neon-text { color: var(--neon); text-shadow: 0 0 15px var(--neon); }
+        .neon-border { border: 1px solid var(--neon); box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
+
+        nav { display: flex; justify-content: space-between; padding: 25px 5%; background: rgba(0,0,0,0.9); border-bottom: 1px solid rgba(0,229,255,0.1); position: sticky; top: 0; z-index: 1000; }
+        
+        .hero { display: flex; align-items: center; padding: 100px 5%; min-height: 80vh; gap: 50px; }
+        .hero-text { flex: 1; }
+        .hero-image { flex: 1; text-align: center; }
+        .hero-image img { width: 80%; filter: drop-shadow(0 0 20px var(--neon)); } /* هنا تضع صورة الروبوت */
+
+        .btn-glow { padding: 15px 40px; background: var(--neon); color: #000; font-weight: 900; border-radius: 5px; text-decoration: none; display: inline-block; box-shadow: 0 0 20px var(--neon); transition: 0.3s; }
+        .btn-glow:hover { transform: scale(1.05); background: #fff; }
+
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 50px 5%; }
+        .feature-card { background: #050505; border: 1px solid rgba(0,229,255,0.1); padding: 40px; text-align: center; border-radius: 10px; }
+        .feature-card img { width: 100px; margin-bottom: 20px; } /* صور الروبوتات الصغيرة */
     </style>
 </head>
 <body>
     <nav>
-        <div style="font-weight:900; color:var(--gold); letter-spacing:2px;">WHALEMIND AI</div>
-        <div class="nav-links">
-            <a href="index.html">الرئيسية</a>
-            <a href="about.html">من نحن</a>
-            <a href="dashboard.html">لوحة التحكم</a>
-            <a href="terms.html">الشروط</a>
+        <div style="font-weight:900; font-size:24px;" class="neon-text">WHALEMIND AI</div>
+        <div>
+            <a href="2-login.html" style="color:#fff; text-decoration:none; margin-left:20px;">دخول آمن</a>
+            <a href="3-register.html" class="btn-glow" style="padding:10px 25px;">انضم للنخبة</a>
         </div>
     </nav>
+
     <section class="hero">
-        <div style="color:var(--gold); font-weight:bold; letter-spacing:3px; margin-bottom:20px;">EXECUTIVE TERMINAL</div>
-        <h1>القيادة المركزية <br> <span style="color:var(--gold)">للذكاء الهجين</span></h1>
-        <p style="color:#666; max-width:800px; margin:30px auto;">أهلاً بك في المنصة الرسمية لمحرك التيتانيوم 60. سيطر على سيولة السوق برؤية الحيتان.</p>
-        <a href="dashboard.html" class="btn btn-gold">دخول لوحة التحكم</a>
-        <a href="about.html" class="btn btn-outline">استعراض الهوية</a>
+        <div class="hero-text">
+            <h1 style="font-size: 4rem; line-height: 1.2;">مستقبل التداول <br><span class="neon-text">بذكاء التيتانيوم</span></h1>
+            <p style="color: #888; font-size: 1.2rem; margin: 30px 0;">نظام هجين متكامل لفك شفرات الحيتان وتعليم المتداولين من الصفر برؤية عالمية.</p>
+            <a href="3-register.html" class="btn-glow">ابدأ رحلتك الآن</a>
+        </div>
+        <div class="hero-image">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="AI Robot">
+        </div>
     </section>
-    <div class="grid">
-        <div class="card"><h3>رادار الحيتان</h3><p>تتبع فوري للسيولة الكبرى.</p></div>
-        <div class="card"><h3>محرك تيتانيوم</h3><p>تحليل ذكاء اصطناعي بنسبة 94%.</p></div>
-        <div class="card"><h3>التداول الآلي</h3><p>ربط مباشر عبر API و Web3.</p></div>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" alt="Robot 1">
+            <h3 class="neon-text">الأكاديمية الذكية</h3>
+            <p>شروحات احترافية بالصور والفيديو لضبط النفس وتعلم الأساسيات.</p>
+        </div>
+        <div class="feature-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2592/2592223.png" alt="Robot 2">
+            <h3 class="neon-text">رادار الحيتان</h3>
+            <p>تتبع السيولة الضخمة وتنبيهات الانفجار السعري قبل حدوثه.</p>
+        </div>
     </div>
 </body>
 </html>
-
 
