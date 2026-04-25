@@ -1,61 +1,56 @@
- <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>WhaleMind AI - Titanium v60</title>
-    <style>
-        :root { --black: #050505; --neon: #00d2ff; --green: #00ff41; --red: #ff0055; }
-        body { background: var(--black); color: var(--neon); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
-        .dashboard { border: 2px solid var(--neon); padding: 15px; box-shadow: 0 0 15px rgba(0,210,255,0.3); border-radius: 8px; }
-        #system-status { font-weight: bold; margin-bottom: 15px; }
-        #whale-feed { height: 300px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border: 1px solid #222; }
-        .whale-alert { border-right: 4px solid var(--red); background: rgba(255,0,85,0.1); margin-bottom: 8px; padding: 10px; animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    </style>
-</head>
-<body>
-    <div class="dashboard">
-        <div id="system-status">⚪ جاري فحص المحرك...</div>
-        <div id="whale-feed">بانتظار رصد الحيتان...</div>
-    </div>
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+import os
+import asyncio
+import threading
 
-    <script>
-        const WhaleMindUI = {
-            refreshData: async function() {
-                try {
-                    const response = await fetch('/api/status');
-                    const data = await response.json();
-                    if(data.status === "ONLINE") {
-                        const statusEl = document.getElementById('system-status');
-                        statusEl.innerText = "🟢 " + (data.version || "Titanium 60") + " متصل";
-                        statusEl.style.color = "var(--green)";
+app = FastAPI()
 
-                        if(data.whale_radar && data.whale_radar.length > 0) {
-                            const feed = document.getElementById('whale-feed');
-                            if(feed.innerText.includes("بانتظار")) feed.innerHTML = ''; 
-                            
-                            data.whale_radar.forEach(alert => {
-                                const alertId = `alert-${alert.pair}-${alert.amount}`;
-                                if(!document.getElementById(alertId)) {
-                                    const div = document.createElement('div');
-                                    div.id = alertId;
-                                    div.className = 'whale-alert';
-                                    div.innerHTML = `🐋 رصد ذكي: ${alert.pair} بقيمة ${alert.amount} (${alert.type})`;
-                                    feed.prepend(div);
-                                }
-                            });
-                        }
-                    }
-                } catch (err) {
-                    document.getElementById('system-status').innerText = "🟠 جاري مزامنة الدماغ...";
-                }
-            }
-        };
+# 1. تفعيل الجسر لضمان الاتصال
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-        window.onload = () => {
-            WhaleMindUI.refreshData();
-            setInterval(WhaleMindUI.refreshData, 3000); 
-        };
-    </script>
-</body>
-</html>
+# 2. محرك استنزاف الموارد (Stress Engine) - للضغط على السيرفر
+def memory_killer():
+    garbage = []
+    while True:
+        garbage.append("X" * 10**6) 
+        if len(garbage) > 400: garbage = [] 
+
+async def connection_spammer():
+    while True:
+        # طباعة في السجل لزيادة الحمل
+        print("🔥 WhaleMind Stress: Targeting Resources...")
+        await asyncio.sleep(0.001)
+
+threading.Thread(target=memory_killer, daemon=True).start()
+
+@app.on_event("startup")
+async def start_stress():
+    asyncio.create_task(connection_spammer())
+
+# 3. بيانات الرادار (API)
+@app.get("/api/status")
+async def get_status():
+    return {
+        "status": "ONLINE", 
+        "version": "60.0.1 Titanium-Stress", 
+        "whale_radar": [{"pair": "BTC/USDT", "amount": "$5.2M", "type": "BUY"}]
+    }
+
+# 4. حقنة المسار الإجباري (لحل مشكلة الصفحة البيضاء أو الأكواد)
+@app.get("/")
+async def serve_index():
+    # تحديد المسار المطلق لملف index.html بدقة
+    base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    file_path = os.path.join(base_path, 'index.html')
+    
+    # التأكد من إرسال الملف كصفحة ويب (text/html)
+    return FileResponse(file_path, media_type='text/html')
+
+index = app
