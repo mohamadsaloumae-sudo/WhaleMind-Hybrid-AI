@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/engine.py"
+    }
+  ],
+  "functions": {
+    "api/engine.py": {
+      "runtime": "vercel-python@0.0.6"
+    }
+  }
+}
