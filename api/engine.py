@@ -5,10 +5,11 @@ import httpx
 
 app = FastAPI()
 
-# تفعيل الربط بين الواجهة والدماغ (CORS) لضمان عدم ظهور أخطاء في المتصفح
+# الجسر الأول: CORS (السماح للواجهة الرئيسية بالتحدث مع الدماغ)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], # يسمح لأي رابط موقع بطلب البيانات
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -19,15 +20,15 @@ class WhaleMindTitanium:
         self.admin_wallet = "TRSKhB9Fvvw6SM8QpK2vep4XqN6gyXDQ9V"
 
     def get_public_data(self):
-        # هذه هي البيانات التي ستعرضها الشاشة فوراً عند الفتح
+        # هذه البيانات ستظهر فوراً في الشاشة لتثبت أن الرادار يعمل
         return [
             {"pair": "BTC/USDT", "amount": "15,000,000$", "type": "BUY", "time": "Just Now"},
             {"pair": "ETH/USDT", "amount": "8,400,000$", "type": "SELL", "time": "2 mins ago"}
         ]
 
+# الجسر الثاني: مسار الحالة (Status Bridge)
 @app.get("/api/status")
 async def get_status():
-    # هذا المسار هو الذي سيحول علامة الـ X إلى علامة صح خضراء ✔️
     engine = WhaleMindTitanium()
     return {
         "status": "ONLINE",
@@ -36,11 +37,12 @@ async def get_status():
         "insurance_needed": True
     }
 
+# الجسر الثالث: مسار الربط (Connection Bridge)
 @app.post("/api/connect-client")
 async def connect_client(request: Request):
-    # استخدام مكتبة ccxt التي أضفتها أنت للربط مع العميل
     try:
         data = await request.json()
+        # الربط مع باينانس لخدمة المستخدم
         exchange = ccxt.binance({
             'apiKey': data.get('apiKey'),
             'secret': data.get('secret'),
@@ -51,5 +53,9 @@ async def connect_client(request: Request):
             "balance": balance['total'].get('USDT', 0)
         }
     except Exception as e:
-        return {"status": "FAILED", "message": "فشل الاتصال بباينانس"}
+        return {"status": "FAILED", "message": str(e)}
+
+# الجسر الرابع: ربط المحرك بالسيرفر الرئيسي
+index = app 
+
 
