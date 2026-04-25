@@ -1,20 +1,13 @@
 {
-  "functions": {
-    "api/*.py": {
-      "runtime": "vercel-python@0.1.0"
-    }
-  },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/engine.py" }
+  "version": 2,
+  "builds": [
+    { "src": "api/engine.py", "use": "@vercel/python" },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "*.js", "use": "@vercel/static" }
   ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
-      ]
-    }
+  "routes": [
+    { "src": "/api/(.*)", "dest": "api/engine.py" },
+    { "src": "/", "dest": "index.html" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
