@@ -50,7 +50,7 @@
     <header>
         <div><i class="fas fa-bars fa-lg"></i></div>
         <div style="font-weight:bold; font-size:18px;">WhaleMind <span style="color:var(--neon-blue)">AI</span></div>
-        <div id="system-status" style="font-size:10px; color:var(--neon-blue)">جسر هجين متصل</div>
+        <div id="system-status" style="font-size:10px; color:var(--neon-blue)">جاري فحص الجسور...</div>
     </header>
 
     <main id="viewport">
@@ -97,13 +97,14 @@
     </footer>
 </div>
 
+<script src="bridge.js"></script>
+
 <script>
     const WhaleMindBridge = {
         socket: null,
         chartSeries: null,
         symbols: ['btcusdt', 'ethusdt'],
 
-        // 1. تشغيل الرادار والأسعار الحية (WebSocket Bridge)
         initLiveFeed: function() {
             const streams = this.symbols.map(s => `${s}@ticker`).join('/');
             this.socket = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}/btcusdt@aggTrade`);
@@ -113,7 +114,7 @@
                 if (msg.data.e === '24hrTicker') this.updatePriceUI(msg.data.s, msg.data.c);
                 if (msg.data.e === 'aggTrade') {
                     const value = parseFloat(msg.data.p) * parseFloat(msg.data.q);
-                    if (value > 500000) this.pushWhaleAlert(msg.data.s, value);
+                    if (value > 5000000) this.pushWhaleAlert(msg.data.s, value);
                 }
             };
         },
@@ -127,11 +128,10 @@
             const feed = document.getElementById('whale-feed');
             const div = document.createElement('div');
             div.className = 'chat-room whale-alert';
-            div.innerHTML = `🐋 حوت رصد: دخول $${(value/1000000).toFixed(2)}M في ${symbol}`;
+            div.innerHTML = `🐋 رادار الحيتان: دخول سيولة بقيمة $${(value/1000000).toFixed(2)}M في ${symbol}`;
             feed.prepend(div);
         },
 
-        // 2. محرك الشارت العالمي (TradingView Bridge)
         initChart: function() {
             const container = document.getElementById('tv-chart-container');
             const chart = LightweightCharts.createChart(container, {
@@ -141,14 +141,13 @@
             this.chartSeries = chart.addCandlestickSeries({ upColor: '#0ecb81', downColor: '#f6465d' });
         },
 
-        // 3. جسر المحافظ (Web3/Ethers Bridge)
         connectWallet: async function() {
             if (window.ethereum) {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
                 const signer = provider.getSigner();
                 const address = await signer.getAddress();
-                document.getElementById('system-status').innerText = `متصل: ${address.substring(0,6)}...`;
+                document.getElementById('system-status').innerText = `محفظة: ${address.substring(0,6)}...`;
                 alert("تم ربط محفظة Web3 بنجاح");
             } else {
                 alert("يرجى تثبيت MetaMask");
@@ -157,7 +156,6 @@
 
         switchSystem: function(type) {
             document.getElementById('system-status').innerText = `نظام ${type} نشط`;
-            console.log(`تم تحويل المحرك لـ ${type} عبر مكتبة CCXT`);
         }
     };
 
@@ -168,10 +166,16 @@
         btn.classList.add('active');
     }
 
+    // 3. التشغيل النهائي الموحد لكل الجسور
     window.onload = () => {
         WhaleMindBridge.initChart();
         WhaleMindBridge.initLiveFeed();
+        // تفعيل دماغ التيتانيوم بصمت من ملف bridge.js
+        if (typeof WhaleMindBot !== 'undefined') {
+            WhaleMindBot.activateEngine();
+        }
     };
 </script>
 </body>
 </html>
+
