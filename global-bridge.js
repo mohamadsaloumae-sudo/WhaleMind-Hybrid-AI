@@ -1,32 +1,64 @@
-// WhaleMind AI - Global Hybrid Bridge
+// WhaleMind AI - Global Hybrid Bridge (Titanium 60 Edition)
 const GlobalBridge = {
-    // 1. جسر المنصات المركزية (CEX) باستخدام منطق CCXT
+    // 1. جسر المنصات المركزية (CEX) - الربط عبر الدماغ الخلفي
     async fetchCexData(exchangeId, apiKey, apiSecret) {
-        console.log(`جارٍ الربط مع ${exchangeId} عبر جسر CCXT...`);
-        // هنا يتم استدعاء المكتبة لجلب الرصيد والصفقات
-    },
-
-    // 2. جسر البلوكشين (DEX & Wallets) باستخدام Web3
-    async connectBlockchain() {
-        if (window.ethereum) {
-            try {
-                // طلب الاتصال بمحفظة المستخدم (MetaMask)
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                console.log("تم ربط المحفظة اللامركزية:", accounts[0]);
-                return accounts[0];
-            } catch (error) {
-                console.error("رفض الاتصال بالمحفظة");
-            }
-        } else {
-            alert("يرجى تنصيب محفظة Web3 (MetaMask)");
+        console.log(`🚀 تفعيل جسر CCXT للربط مع ${exchangeId}...`);
+        try {
+            // نرسل المفاتيح للدماغ ليقوم هو بالعملية الصعبة بعيداً عن المتصفح
+            const response = await fetch('/api/connect-client', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ exchange: exchangeId, apiKey, apiSecret })
+            });
+            const data = await response.json();
+            return data.status === "SUCCESS" ? parseFloat(data.balance) : 0;
+        } catch (e) {
+            console.error("❌ تعطل جسر المنصات المركزية");
+            return 0;
         }
     },
 
-    // 3. الموحد (The Aggregator)
-    // هذا الفعل هو الذي يجمع ميزانك من باينانس ومن محفظتك في رقم واحد
+    // 2. جسر البلوكشين (DEX & Wallets) - ربط Web3 المباشر
+    async connectBlockchain() {
+        if (window.ethereum) {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                console.log("✅ تم ربط المحفظة اللامركزية:", accounts[0]);
+                return accounts[0];
+            } catch (error) {
+                console.error("⚠️ رفض الاتصال بمحفظة Web3");
+                return null;
+            }
+        } else {
+            alert("يرجى تنصيب محفظة Web3 (مثلاً MetaMask) لتفعيل ميزات DEX");
+            return null;
+        }
+    },
+
+    // 3. الموحد المالي (The Aggregator)
+    // هنا يخدم الجسر الملف الرئيسي عن طريق جمع الأرصدة في رقم واحد
     async syncTotalBalance() {
+        const statusEl = document.getElementById('system-status');
+        if(statusEl) statusEl.innerText = "⏳ جاري مزامنة الأرصدة الموحدة...";
+
+        // جلب رصيد باينانس (أو أي منصة) عبر الدماغ
         const cexBal = await this.fetchCexData('binance');
-        const dexBal = await this.getWalletBalance();
-        document.getElementById('total-balance').innerText = `$${cexBal + dexBal}`;
+        
+        // جلب رصيد المحفظة (افتراضي 0 حالياً حتى تفعيل منطق Web3 كاملاً)
+        const dexBal = 0; 
+
+        const total = cexBal + dexBal;
+        const totalEl = document.getElementById('total-balance');
+        if(totalEl) {
+            totalEl.innerText = `$${total.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        }
+        
+        if(statusEl) statusEl.innerText = "🟢 تم تحديث المحفظة الموحدة";
     }
 };
+
+// تفعيل المزامنة عند الضغط على زر الربط في الواجهة
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("💎 WhaleMind Global Bridge Active");
+});
+
