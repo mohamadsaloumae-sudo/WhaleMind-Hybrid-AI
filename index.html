@@ -3,191 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhaleMind | منصة تداول الحيتان العالمية</title>
+    <title>WhaleMind | Buy & Sell Crypto</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
         
         :root {
-            --binance-black: #0b0e11;
-            --whale-blue: #00e5ff;
-            --surface-color: #1e2329;
+            --bg-black: #0b0e11;
+            --main-blue: #00e5ff; /* لون الحوت النيوني */
+            --surface: #1e2329;
+            --hover-bg: #2b3139;
             --text-gray: #848e9c;
-            --line-color: #2b3139;
+            --border-color: #2b3139;
         }
 
-        body {
-            background-color: var(--binance-black);
-            color: #eaecef;
-            font-family: 'Tajawal', sans-serif;
-            margin: 0; padding: 0;
-        }
+        body { background-color: var(--bg-black); color: #eaecef; font-family: 'Tajawal', sans-serif; margin: 0; }
 
-        /* شريط علوي (إعلانات) */
-        .top-bar {
-            background: #181a20;
-            padding: 8px 5%;
-            font-size: 13px;
-            display: flex;
-            justify-content: center;
-            border-bottom: 1px solid var(--line-color);
-        }
-
-        /* الهيدر الهيكلي لباينانس */
+        /* الطبقة 1: Navigation Bar (نسخة طبق الأصل) */
         header {
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            background: var(--binance-black);
-            border-bottom: 1px solid var(--line-color);
+            height: 64px; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 24px; background: var(--bg-black); border-bottom: 1px solid var(--border-color);
             position: sticky; top: 0; z-index: 1000;
         }
 
-        .left-nav { display: flex; align-items: center; gap: 24px; }
-        .logo { font-weight: 900; font-size: 24px; color: var(--whale-blue); text-decoration: none; }
-        .nav-item { color: #eaecef; text-decoration: none; font-size: 14px; font-weight: 500; }
-        .nav-item:hover { color: var(--whale-blue); }
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 20px; }
+        
+        .logo { font-weight: 900; font-size: 24px; color: var(--main-blue); text-decoration: none; margin-left: 10px; }
 
-        .right-nav { display: flex; align-items: center; gap: 16px; }
-        .btn-login { color: #eaecef; text-decoration: none; font-size: 14px; }
-        .btn-register { 
-            background: var(--whale-blue); 
-            color: #000; 
-            padding: 6px 16px; 
-            border-radius: 4px; 
-            text-decoration: none; 
-            font-weight: 600; 
-            font-size: 14px;
-        }
+        .nav-link { color: #eaecef; text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.2s; }
+        .nav-link:hover { color: var(--main-blue); }
 
-        /* قسم البطولة (Hero) بنفس توزيع باينانس */
-        .hero-section {
-            padding: 60px 5% 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 40px;
-        }
+        .btn-reg { background: var(--main-blue); color: #000; padding: 6px 16px; border-radius: 4px; font-weight: 600; text-decoration: none; font-size: 14px; }
 
-        .hero-content { max-width: 600px; }
-        .hero-content h1 { font-size: 48px; font-weight: 700; margin-bottom: 16px; }
-        .hero-content p { font-size: 20px; color: var(--text-gray); margin-bottom: 32px; }
+        /* الطبقة 2: Hero Section (التوزيع القياسي لباينانس) */
+        .hero { display: flex; padding: 60px 5%; align-items: center; justify-content: space-between; min-height: 450px; }
+        .hero-info { max-width: 40%; }
+        .hero-info h1 { font-size: 48px; font-weight: 700; line-height: 1.1; margin-bottom: 16px; }
+        .hero-info p { font-size: 20px; color: var(--text-gray); margin-bottom: 32px; }
 
-        /* شريط أسعار العملات (Ticker) */
-        .market-ticker {
-            display: flex;
-            padding: 24px 5%;
-            gap: 48px;
-            overflow-x: auto;
-            border-bottom: 1px solid var(--line-color);
-        }
-        .ticker-card { min-width: 150px; }
-        .ticker-pair { font-size: 14px; color: var(--text-gray); }
-        .ticker-price { font-size: 18px; font-weight: 600; margin: 4px 0; }
-        .ticker-change { font-size: 14px; color: #0ecb81; } /* أخضر باينانس */
+        .qr-section { background: var(--surface); padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; width: fit-content; }
+        .qr-placeholder { width: 80px; height: 80px; background: #fff; border-radius: 4px; }
 
-        /* قسم الخدمات بنظام المربعات */
-        .services { padding: 80px 5%; }
-        .section-title { font-size: 32px; font-weight: 700; margin-bottom: 48px; }
-        .service-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
-        }
-        .s-card { display: flex; gap: 20px; }
-        .s-card i { font-size: 32px; color: var(--whale-blue); }
-        .s-card h3 { font-size: 20px; margin: 0 0 8px 0; }
-        .s-card p { color: var(--text-gray); font-size: 14px; line-height: 1.5; }
+        /* الطبقة 3: Market Bar (شريط العملات) */
+        .market-ticker { display: flex; padding: 24px 5%; gap: 40px; overflow-x: auto; border-bottom: 1px solid var(--border-color); }
+        .ticker-item { min-width: 140px; }
+        .ticker-item .pair { font-size: 14px; color: var(--text-gray); }
+        .ticker-item .price { font-size: 18px; font-weight: 600; margin: 5px 0; }
+        .ticker-item .change { font-size: 14px; color: #0ecb81; }
 
+        /* الطبقة 4: شبكة الخدمات (Products) */
+        .grid-services { padding: 60px 5%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        .service-box { display: flex; flex-direction: column; gap: 15px; }
+        .service-box i { font-size: 32px; color: var(--main-blue); }
+        .service-box h3 { font-size: 24px; margin: 0; }
+        .service-box p { color: var(--text-gray); line-height: 1.5; font-size: 14px; }
+
+        /* الموبايل (Responsive) */
         @media (max-width: 768px) {
-            .hero-section { flex-direction: column; text-align: center; }
+            .hero { flex-direction: column; text-align: center; }
+            .hero-info { max-width: 100%; }
             .desktop-only { display: none; }
-            .hero-content h1 { font-size: 32px; }
+            .grid-services { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <span>🚀 WhaleMind AI: تتبع تحركات الحيتان لحظة بلحظة وبدقة 99%</span>
-    </div>
-
     <header>
-        <div class="left-nav">
+        <div class="nav-left">
             <a href="#" class="logo">WHALEMIND</a>
-            <a href="#" class="nav-item desktop-only">الأسواق</a>
-            <a href="#" class="nav-item desktop-only">التداول الآلي</a>
-            <a href="#" class="nav-item desktop-only">الأكاديمية</a>
-            <a href="#" class="nav-item desktop-only">المزيد</a>
+            <a href="#" class="nav-link desktop-only">الأسواق</a>
+            <a href="#" class="nav-link desktop-only">تداول</a>
+            <a href="#" class="nav-link desktop-only">المشتقات</a>
+            <a href="#" class="nav-link desktop-only">الأكاديمية</a>
         </div>
-        <div class="right-nav">
-            <a href="2-login.html" class="btn-login">تسجيل الدخول</a>
-            <a href="3-register.html" class="btn-register">بدء الاستخدام</a>
-            <i class="fas fa-globe desktop-only" style="color: var(--text-gray); cursor: pointer;"></i>
+        <div class="nav-right">
+            <a href="2-login.html" class="nav-link">تسجيل الدخول</a>
+            <a href="3-register.html" class="btn-reg">تسجيل</a>
+            <i class="fas fa-search desktop-only"></i>
+            <i class="fas fa-download desktop-only"></i>
         </div>
     </header>
 
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1>اشتري وبع العملات <br>بذكاء <span style="color: var(--whale-blue);">الحيتان</span></h1>
-            <p>انضم إلى المنصة الرائدة في تتبع السيولة الضخمة وإدارة المشاعر في التداول.</p>
-            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <a href="3-register.html" class="btn-register" style="padding: 12px 32px; font-size: 16px;">سجل الآن</a>
-                <button style="background: var(--surface-color); color: #fff; border: none; padding: 12px 32px; border-radius: 4px; font-weight: 600; cursor: pointer;">تحميل التطبيق</button>
+    <section class="hero">
+        <div class="hero-info">
+            <h1>تملك مستقبلك <br>مع <span style="color:var(--main-blue)">WhaleMind AI</span></h1>
+            <p>انضم لأكبر منصة لتتبع الحيتان وتطوير الأداء النفسي في الوطن العربي.</p>
+            <div class="qr-section">
+                <div class="qr-placeholder"></div>
+                <div>
+                    <div style="font-weight:bold;">سجل الآن</div>
+                    <div style="font-size:12px; color:var(--text-gray);">ابدأ التداول بذكاء اليوم</div>
+                </div>
             </div>
         </div>
-        <div class="hero-image desktop-only">
-            <img src="https://i.ibb.co/vz6mD2V/whale-ai-logo.png" alt="Whale" style="width: 450px; filter: drop-shadow(0 0 30px var(--whale-blue));">
+        <div class="hero-visual desktop-only">
+            <img src="https://i.ibb.co/vz6mD2V/whale-ai-logo.png" alt="Whale" width="450">
         </div>
     </section>
 
     <div class="market-ticker">
-        <div class="ticker-card">
-            <div class="ticker-pair">BTC/USDT <span style="color: #0ecb81;">+2.35%</span></div>
-            <div class="ticker-price">64,521.10</div>
+        <div class="ticker-item">
+            <div class="pair">BTC/USDT <span class="change">+1.25%</span></div>
+            <div class="price">64,120.00</div>
         </div>
-        <div class="ticker-card">
-            <div class="ticker-pair">ETH/USDT <span style="color: #0ecb81;">+1.12%</span></div>
-            <div class="ticker-price">3,480.15</div>
+        <div class="ticker-item">
+            <div class="pair">ETH/USDT <span class="change">+2.10%</span></div>
+            <div class="price">3,450.50</div>
         </div>
-        <div class="ticker-card">
-            <div class="ticker-pair">BNB/USDT <span style="color: #f0b90b;">+0.54%</span></div>
-            <div class="ticker-price">590.20</div>
+        <div class="ticker-item">
+            <div class="pair">BNB/USDT <span class="change">+0.85%</span></div>
+            <div class="price">595.20</div>
         </div>
-        <div class="ticker-card">
-            <div class="ticker-pair">WMT/USDT <span style="color: var(--whale-blue);">+15.0%</span></div>
-            <div class="ticker-price">0.051</div>
+        <div class="ticker-item">
+            <div class="pair">WMT/USDT <span style="color:var(--main-blue)">+15.0%</span></div>
+            <div class="price">0.051</div>
         </div>
     </div>
 
-    <section class="services">
-        <h2 class="section-title">محفظة من الأدوات الاحترافية</h2>
-        <div class="service-grid">
-            <div class="s-card">
-                <i class="fas fa-satellite-dish"></i>
-                <div>
-                    <h3>رادار السيولة</h3>
-                    <p>تغطية شاملة لكل تحركات الأموال التي تتجاوز 5 مليون دولار في السوق.</p>
-                </div>
-            </div>
-            <div class="s-card">
-                <i class="fas fa-brain"></i>
-                <div>
-                    <h3>المستشفى النفسي</h3>
-                    <p>أدوات متقدمة لتحليل حالتك الذهنية وضمان عدم اتخاذ قرارات عاطفية.</p>
-                </div>
-            </div>
-            <div class="s-card">
-                <i class="fas fa-shield-alt"></i>
-                <div>
-                    <h3>أمان الحيتان</h3>
-                    <p>بروتوكولات تشفير عالمية لحماية أصولك وبياناتك الشخصية.</p>
-                </div>
-            </div>
+    <div class="grid-services">
+        <div class="service-box">
+            <i class="fas fa-robot"></i>
+            <h3>رادار الحيتان</h3>
+            <p>نظام تنبيهات فوري لتحركات المحافظ الضخمة التي تتجاوز 5 مليون دولار.</p>
         </div>
-    </section>
+        <div class="service-box">
+            <i class="fas fa-graduation-cap"></i>
+            <h3>أكاديمية التيتانيوم</h3>
+            <p>تعلم التداول من الصفر مع أقوى كورس في سيكولوجية السوق وإدارة المخاطر.</p>
+        </div>
+        <div class="service-box">
+            <i class="fas fa-user-check"></i>
+            <h3>المستشفى النفسي</h3>
+            <p>أول نظام ذكاء اصطناعي يحلل صفقاتك ويعطيك تقريراً عن حالتك النفسية.</p>
+        </div>
+    </div>
 
 </body>
 </html>
