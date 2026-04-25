@@ -1,163 +1,50 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhaleMind AI | Global Hybrid Intelligence</title>
+    <title>WhaleMind AI | Global Terminal</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary: #00f2ff;
-            --secondary: #006ae6;
-            --accent: #7000ff;
-            --bg-deep: #020205;
-            --panel-bg: rgba(15, 15, 25, 0.7);
-            --glass-border: rgba(0, 242, 255, 0.15);
-            --text-glow: 0 0 10px rgba(0, 242, 255, 0.5);
-        }
-
-        body {
-            background-color: var(--bg-deep);
-            color: #e0e0e0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            margin: 0;
-            overflow-x: hidden;
-            background-image: 
-                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-        }
-
-        /* نافبار الأجهزة الاستخباراتية */
-        nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 5%; background: rgba(0,0,0,0.9);
-            border-bottom: 1px solid var(--glass-border);
-            position: fixed; width: 90%; top: 0; z-index: 1000; backdrop-filter: blur(20px);
-        }
-
-        .brand { font-size: 22px; font-weight: 900; letter-spacing: 2px; color: var(--primary); text-shadow: var(--text-glow); }
-
-        /* شاشة الاستقبال الرئيسية */
-        .hero-section {
-            padding: 180px 5% 100px; text-align: center;
-            background: radial-gradient(circle at center, #0a1128 0%, var(--bg-deep) 100%);
-        }
-
-        .badge {
-            display: inline-block; padding: 6px 15px; border-radius: 50px;
-            background: rgba(0, 242, 255, 0.1); border: 1px solid var(--primary);
-            color: var(--primary); font-size: 12px; font-weight: bold; margin-bottom: 20px;
-        }
-
-        h1 { font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1; margin: 0; font-weight: 900; }
-        .gradient-text { background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        /* لوحة التحكم (The Dashboard) */
-        .dashboard-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px; padding: 50px 5%; margin-top: -50px;
-        }
-
-        .terminal-panel {
-            background: var(--panel-bg); border: 1px solid var(--glass-border);
-            border-radius: 20px; padding: 30px; backdrop-filter: blur(10px);
-            transition: 0.4s; position: relative; overflow: hidden;
-        }
-
-        .terminal-panel:hover { border-color: var(--primary); box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); }
-
-        /* أزرار الربط الاحترافية */
-        .action-btn {
-            width: 100%; padding: 16px; margin-top: 15px; border-radius: 12px;
-            border: none; cursor: pointer; font-weight: 800; font-size: 15px;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: 0.3s;
-        }
-
-        .btn-web3 { background: #f6851b; color: white; }
-        .btn-ai { background: linear-gradient(45deg, var(--secondary), var(--accent)); color: white; }
-
-        /* شاشة مراقبة حية */
-        .live-monitor {
-            background: #000; border-radius: 10px; padding: 15px;
-            font-family: 'monospace'; font-size: 12px; color: #00ff00;
-            border: 1px solid #111; height: 120px; margin-top: 15px;
-        }
-
-        /* قسم "من نحن" الستاندرد */
-        .about-section { padding: 100px 5%; display: flex; flex-wrap: wrap; gap: 50px; align-items: center; }
-        .about-content { flex: 1; min-width: 300px; }
-        .about-content h2 { font-size: 2.5rem; color: var(--primary); }
-
-        footer { padding: 50px; text-align: center; border-top: 1px solid var(--glass-border); opacity: 0.5; }
-
-        @media (max-width: 768px) { nav { width: 100%; padding: 15px 5%; left: 0; } }
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;900&display=swap');
+        :root { --gold: #d4af37; --bg: #020204; --border: rgba(255,255,255,0.08); }
+        body { background: var(--bg); color: #fff; font-family: 'Tajawal', sans-serif; margin: 0; }
+        nav { display: flex; justify-content: space-between; padding: 25px 5%; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(2,2,4,0.95); z-index: 100; }
+        .nav-links a { color: #888; text-decoration: none; margin: 0 15px; font-size: 14px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--gold); }
+        .hero { padding: 150px 5%; text-align: center; background: radial-gradient(circle at center, #0a0a15 0%, #020204 100%); }
+        h1 { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 900; margin: 0; }
+        .btn { padding: 15px 40px; border-radius: 4px; display: inline-block; margin: 20px 10px; text-decoration: none; font-weight: bold; transition: 0.4s; }
+        .btn-gold { background: var(--gold); color: #000; }
+        .btn-outline { border: 1px solid var(--border); color: #fff; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 50px 5%; }
+        .card { background: rgba(255,255,255,0.02); padding: 40px; border: 1px solid var(--border); transition: 0.4s; }
+        .card:hover { border-color: var(--gold); background: rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
-
     <nav>
-        <div class="brand">WHALEMIND <span style="color:#fff">AI</span></div>
-        <div class="status-badge" style="color: #00ff00; font-size: 12px;"><i class="fas fa-bolt"></i> TITANIUM 60: ONLINE</div>
+        <div style="font-weight:900; color:var(--gold); letter-spacing:2px;">WHALEMIND AI</div>
+        <div class="nav-links">
+            <a href="index.html">الرئيسية</a>
+            <a href="about.html">من نحن</a>
+            <a href="dashboard.html">لوحة التحكم</a>
+            <a href="terms.html">الشروط</a>
+        </div>
     </nav>
-
-    <section class="hero-section">
-        <div class="badge">نظام استخبارات السيولة الهجين v3.0</div>
-        <h1><span class="gradient-text">WhaleMind</span> <br> القيادة المركزية</h1>
-        <p style="color: #888; max-width: 800px; margin: 20px auto;">المنصة العالمية الأولى لتداول العملات الرقمية المعتمدة على خوارزميات التيتانيوم ومراقبة تحركات المحافظ الكبرى لحظياً.</p>
+    <section class="hero">
+        <div style="color:var(--gold); font-weight:bold; letter-spacing:3px; margin-bottom:20px;">EXECUTIVE TERMINAL</div>
+        <h1>القيادة المركزية <br> <span style="color:var(--gold)">للذكاء الهجين</span></h1>
+        <p style="color:#666; max-width:800px; margin:30px auto;">أهلاً بك في المنصة الرسمية لمحرك التيتانيوم 60. سيطر على سيولة السوق برؤية الحيتان.</p>
+        <a href="dashboard.html" class="btn btn-gold">دخول لوحة التحكم</a>
+        <a href="about.html" class="btn btn-outline">استعراض الهوية</a>
     </section>
-
-    <div class="dashboard-grid">
-        
-        <div class="terminal-panel">
-            <h3><i class="fas fa-network-wired"></i> بوابة Web3</h3>
-            <p>اربط محفظتك اللامركزية لتفعيل التداول الفوري عبر العقود الذكية.</p>
-            <button class="action-btn btn-web3"><i class="fas fa-wallet"></i> Connect Wallet (MetaMask)</button>
-        </div>
-
-        <div class="terminal-panel">
-            <h3><i class="fas fa-microchip"></i> تكامل المنصات (CEX)</h3>
-            <p>ربط آمن عبر مفاتيح API لمنصات Binance, OKX, Bybit.</p>
-            <button class="action-btn btn-ai"><i class="fas fa-key"></i> ربط حساب التداول الآلي</button>
-        </div>
-
-        <div class="terminal-panel" style="grid-column: span 1;">
-            <h3><i class="fas fa-satellite"></i> رادار الحيتان الحي</h3>
-            <div class="live-monitor">
-                [SYSTEM] Scanning Blockchain...<br>
-                [DETECTED] Whale Buy: $18,200,000 ETH<br>
-                [AI ANALYSIS] Strength: 98% - High Volatility Expected<br>
-                [AUTO-BOT] Preparing Entry Target 1...
-            </div>
-        </div>
-
+    <div class="grid">
+        <div class="card"><h3>رادار الحيتان</h3><p>تتبع فوري للسيولة الكبرى.</p></div>
+        <div class="card"><h3>محرك تيتانيوم</h3><p>تحليل ذكاء اصطناعي بنسبة 94%.</p></div>
+        <div class="card"><h3>التداول الآلي</h3><p>ربط مباشر عبر API و Web3.</p></div>
     </div>
-
-    <section class="about-section" id="about">
-        <div class="about-content">
-            <h2>مستقبل التداول الذكي</h2>
-            <p>WhaleMind AI ليست مجرد بوت، بل هي منظومة متكاملة صممت لكسر احتكار الحيتان للسوق. نحن نوفر لك الأدوات التي تستخدمها البنوك والمؤسسات الكبرى في قالب واحد سهل الاستخدام.</p>
-            <div style="display: flex; gap: 20px; margin-top: 30px;">
-                <div><h3 style="color:var(--primary); margin:0;">+100M</h3><small>سيولة مراقبة</small></div>
-                <div><h3 style="color:var(--primary); margin:0;">0.01ms</h3><small>زمن الاستجابة</small></div>
-            </div>
-        </div>
-        <div style="flex: 1; min-width: 300px; background: rgba(255,255,255,0.02); padding: 40px; border-radius: 30px; border: 1px dashed var(--glass-border);">
-            <i class="fas fa-user-astronaut" style="font-size: 150px; opacity: 0.1; display: block; text-align: center;"></i>
-        </div>
-    </section>
-
-    <footer>
-        <p>© 2026 WHALEMIND AI | GLOBAL ENTERPRISE TERMINAL</p>
-        <div style="margin-top: 15px;">
-            <a href="#" style="color: var(--primary); text-decoration: none; margin: 0 10px;">Security</a>
-            <a href="#" style="color: var(--primary); text-decoration: none; margin: 0 10px;">Terms</a>
-            <a href="#" style="color: var(--primary); text-decoration: none; margin: 0 10px;">API Docs</a>
-        </div>
-    </footer>
-
 </body>
 </html>
+
 
