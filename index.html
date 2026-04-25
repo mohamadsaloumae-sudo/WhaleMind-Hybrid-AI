@@ -1,176 +1,165 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhaleMind AI | Global Hybrid System</title>
+    <title>WhaleMind AI | السيادة الرقمية</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
         
         :root {
             --neon-blue: #00e5ff;
-            --deep-black: #000000;
-            --glass: rgba(0, 229, 255, 0.03);
-            --border-glow: rgba(0, 229, 255, 0.2);
+            /* خلفية متدرجة: أسود يندمج مع أزرق عميق في المركز */
+            --bg-gradient: radial-gradient(circle at center, #001a1d 0%, #000000 70%);
+            --glass: rgba(0, 229, 255, 0.05);
         }
 
-        * { box-sizing: border-box; transition: all 0.3s ease; }
-
         body {
-            background-color: var(--deep-black);
+            background: var(--bg-gradient);
+            background-attachment: fixed;
             color: #ffffff;
             font-family: 'Tajawal', sans-serif;
             margin: 0;
-            line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* الهيدر المتجاوب */
+        /* تأثير توهج عام للموقع */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            opacity: 0.1; pointer-events: none;
+        }
+
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 5%;
-            background: rgba(0, 0, 0, 0.95);
-            border-bottom: 1px solid var(--border-glow);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
+            padding: 20px 5%;
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0, 229, 255, 0.1);
+            sticky; top: 0; z-index: 1000;
         }
 
-        .logo { font-weight: 900; font-size: 1.5rem; color: var(--neon-blue); text-shadow: 0 0 15px var(--neon-blue); }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-area img { width: 40px; filter: drop-shadow(0 0 5px var(--neon-blue)); }
 
-        .nav-actions { display: flex; align-items: center; gap: 15px; }
-
-        .lang-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-
-        /* منطقة الـ Hero - متجاوبة */
         .hero {
             display: flex;
-            flex-wrap: wrap; /* هذا يجعل العناصر تنزل تحت بعضها في الموبايل */
+            flex-direction: column;
             align-items: center;
-            padding: 60px 8%;
-            min-height: 85vh;
-            gap: 40px;
+            text-align: center;
+            padding: 80px 5%;
+            min-height: 90vh;
         }
 
-        .hero-content { flex: 1; min-width: 300px; }
-        .hero-image { flex: 1; min-width: 300px; text-align: center; position: relative; }
-
-        .hero-image img {
-            max-width: 100%;
-            height: auto;
-            filter: drop-shadow(0 0 30px var(--neon-blue));
-            animation: float 4s ease-in-out infinite;
+        /* صورة الحوت المركزية - أيقونة الذكاء */
+        .whale-avatar {
+            width: clamp(250px, 40vw, 450px);
+            margin-bottom: 30px;
+            filter: drop-shadow(0 0 30px rgba(0, 229, 255, 0.4));
+            animation: pulseWhale 6s ease-in-out infinite;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        @keyframes pulseWhale {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.3)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 50px rgba(0, 229, 255, 0.6)); }
         }
 
-        h1 { font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.1; margin: 0; }
-        h1 span { color: var(--neon-blue); text-shadow: 0 0 20px var(--neon-blue); }
+        h1 { font-size: clamp(2rem, 8vw, 4.5rem); font-weight: 900; margin: 0; line-height: 1; }
+        .neon-txt { color: var(--neon-blue); text-shadow: 0 0 30px var(--neon-blue); }
 
-        .btn-main {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 18px 45px;
+        .bio-text {
+            max-width: 800px;
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.7);
+            margin: 20px 0 40px;
+            line-height: 1.8;
+            background: var(--glass);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 229, 255, 0.1);
+        }
+
+        .cta-group { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .btn-prime {
+            padding: 18px 50px;
             background: var(--neon-blue);
             color: #000;
             font-weight: 900;
             text-decoration: none;
-            border-radius: 5px;
-            box-shadow: 0 0 25px var(--neon-blue);
-            font-size: 1.1rem;
+            border-radius: 50px;
+            box-shadow: 0 0 30px var(--neon-blue);
+            font-size: 1.2rem;
         }
 
-        /* شبكة الصور الموحية (AI Robots) */
-        .ai-grid {
+        /* كروت الروبوتات الشارحة */
+        .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            padding: 80px 8%;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 100px 8%;
         }
 
-        .ai-card {
-            background: var(--glass);
-            border: 1px solid var(--border-glow);
-            border-radius: 15px;
-            padding: 30px;
+        .info-card {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(0, 229, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
             text-align: center;
-            position: relative;
-            overflow: hidden;
+            transition: 0.4s;
         }
 
-        .ai-card::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%);
-        }
+        .info-card:hover { border-color: var(--neon-blue); transform: translateY(-10px); background: rgba(0, 229, 255, 0.02); }
+        .info-card img { width: 150px; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--neon-blue)); }
 
-        .ai-card img { width: 120px; margin-bottom: 20px; filter: hue-rotate(180deg); }
-        .ai-card h3 { color: var(--neon-blue); margin-bottom: 15px; }
-        .ai-card p { color: #888; font-size: 0.9rem; }
-
-        /* الموبايل (إخفاء بعض العناصر أو تصغيرها) */
+        /* موبايل ستايل */
         @media (max-width: 768px) {
-            header { padding: 15px 3%; }
-            .hero { padding: 40px 5%; text-align: center; }
-            h1 { font-size: 2.5rem; }
-            .nav-actions span { display: none; } /* إخفاء النصوص الجانبية في الموبايل */
+            h1 { font-size: 2.8rem; }
+            .bio-text { font-size: 1rem; padding: 15px; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">WHALEMIND AI</div>
-        <div class="nav-actions">
-            <button class="lang-btn">EN / AR</button>
-            <a href="2-login.html" style="color: #fff; text-decoration: none; font-size: 0.9rem; font-weight: bold;">دخول</a>
-            <a href="3-register.html" style="color: var(--neon-blue); text-decoration: none; font-size: 0.9rem; font-weight: bold;">عضوية</a>
+        <div class="logo-area">
+            <span style="font-weight: 900; color: var(--neon-blue); letter-spacing: 2px;">WHALEMIND AI</span>
+        </div>
+        <div>
+            <button style="background:transparent; border:1px solid #333; color:#fff; padding:8px 15px; border-radius:20px; cursor:pointer;">EN / AR</button>
         </div>
     </header>
 
     <section class="hero">
-        <div class="hero-content">
-            <div style="color: var(--neon-blue); font-weight: bold; letter-spacing: 5px; margin-bottom: 10px;">TITANIUM 60 ENGINE</div>
-            <h1>قوة الذكاء <br><span>الهجين العالمي</span></h1>
-            <p style="color: #666; margin-top: 25px; font-size: 1.1rem;">نظام تداول لا يكتفي بالتحليل، بل يغوص في أعماق سيكولوجية السوق ليفك شفرات الحيتان بلمسة تكنولوجية لا تعرف الخطأ.</p>
-            <a href="3-register.html" class="btn-main">ابدأ الآن - مجاناً</a>
+        <img src="https://i.ibb.co/vz6mD2V/whale-ai-logo.png" alt="Whale AI Core" class="whale-avatar">
+        
+        <h1>محرك <span class="neon-txt">تيتانيوم 60</span></h1>
+        
+        <div class="bio-text">
+            نحن لا نراقب السوق، نحن نقرأ أفكار المحركين الحقيقيين له. WhaleMind AI هو نظام هجين يدمج بين خوارزميات تتبع السيولة الضخمة (الحيتان) وبين أعظم استراتيجيات الانضباط النفسي. صُمم هذا الكيان ليكون دليلك السيادي في عالم التداول، من الصفر المطلق وحتى احتراف اقتناص الفرص قبل انفجارها.
         </div>
-        <div class="hero-image">
-            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="WhaleMind AI Robot">
+
+        <div class="cta-group">
+            <a href="3-register.html" class="btn-prime">انضم إلى النخبة</a>
+            <a href="2-login.html" style="color: #fff; text-decoration: none; align-self: center; font-weight: bold; border-bottom: 2px solid var(--neon-blue);">تسجيل الدخول</a>
         </div>
     </section>
 
-    <div class="ai-grid">
-        <div class="ai-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" alt="Academy Bot">
-            <h3>أكاديمية الضبط</h3>
-            <p>هنا يعلمك الروبوت "الصبر" قبل "الشراء". المستشفى النفسي لضبط الانفعالات وفهم لغة الشموع من الصفر.</p>
+    <div class="info-grid">
+        <div class="info-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="AI Robot">
+            <h3 class="neon-txt">رادار السيولة</h3>
+            <p>روبوت متخصص يراقب المحافظ التي تضخ أكثر من 5 ملايين دولار فورياً، ليعطيك إشارة الدخول قبل أن يستيقظ العالم.</p>
         </div>
-        <div class="ai-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/2592/2592223.png" alt="Radar Bot">
-            <h3>رادار التيتانيوم</h3>
-            <p>مسح شامل لسيولة السوق. عندما يتحرك الحوت بـ 5 ملايين دولار، سيقوم الروبوت بتنبيهك فوراً بصورة موحية.</p>
-        </div>
-        <div class="ai-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/10444/10444265.png" alt="Wallet Bot">
-            <h3>بوابة الأمان</h3>
-            <p>إيداع وسحب أرباحك يتم عبر بروتوكولات مشفرة. الروبوت يضمن وصول أموالك لمحفظتك بضغطة زر واحدة.</p>
+        <div class="info-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" alt="Psychology Bot">
+            <h3>المستشفى النفسي</h3>
+            <p>الذكاء الاصطناعي يحلل حالتك النفسية؛ هنا تتعلم كيف تقتل "الطمع" وتزرع "الصبر" لتكون حوتاً لا فريسة.</p>
         </div>
     </div>
-
-    <footer style="text-align: center; padding: 40px; color: #222; border-top: 1px solid #111;">
-        WHALEMIND AI GLOBAL ENTERPRISE © 2026
-    </footer>
 
 </body>
 </html>
