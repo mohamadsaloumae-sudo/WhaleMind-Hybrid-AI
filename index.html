@@ -3,220 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhaleMind AI | الواجهة الرئيسية</title>
+    <title>WhaleMind | المحفظة المركزية واللامركزية</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
-        
-        :root {
-            --bg: #0b0e11;
-            --surface: #1e2329;
-            --neon: #00e5ff;
-            --text-gray: #848e9c;
-            --border: #2b3139;
-            --up: #0ecb81;
-            --down: #f6465d;
+        :root { --bg: #0b0e11; --surface: #1e2329; --neon: #00e5ff; --text-gray: #848e9c; --border: #2b3139; --up: #0ecb81; --down: #f6465d; }
+        body { background: var(--bg); color: #fff; font-family: 'Tajawal', sans-serif; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
+
+        /* كرت الرصيد الرئيسي */
+        .balance-card {
+            background: linear-gradient(135deg, #1e2329 0%, #0b0e11 100%);
+            margin: 20px; padding: 25px; border-radius: 15px;
+            border: 1px solid var(--border); position: relative; overflow: hidden;
+        }
+        .balance-card::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%);
         }
 
-        body { 
-            background: var(--bg); 
-            color: #fff; 
-            font-family: 'Tajawal', sans-serif; 
-            margin: 0; 
-            padding: 0;
-            overflow-x: hidden;
+        /* أزرار العمليات الكبيرة */
+        .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 0 20px; }
+        .action-btn {
+            background: var(--surface); border: 1px solid var(--border); color: #fff;
+            padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .action-btn:active { transform: scale(0.95); background: #2b3139; }
+        .action-btn i { font-size: 20px; color: var(--neon); margin-bottom: 8px; display: block; }
+
+        /* قسم ربط المحفظة اللامركزية (Web3) */
+        .connect-wallet-section {
+            margin: 25px 20px; padding: 20px; border-radius: 12px;
+            background: rgba(0, 229, 255, 0.05); border: 1px dashed var(--neon);
+            text-align: center;
+        }
+        .connect-btn {
+            background: var(--neon); color: #000; border: none; padding: 12px 25px;
+            border-radius: 25px; font-weight: 900; margin-top: 15px; cursor: pointer;
         }
 
-        /* شريط التنقل السفلي الثابت (مثل باينانس) */
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; height: 70px;
-            background: var(--bg); border-top: 1px solid var(--border);
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            z-index: 2000;
-        }
-
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; font-size: 11px; color: var(--text-gray);
-            text-decoration: none; transition: 0.3s;
-        }
-
-        .nav-item.active { color: var(--neon); }
-        .nav-item i { font-size: 22px; margin-bottom: 4px; }
-
-        /* حاوية المحتوى الطولية (Scrollable) */
-        .main-content {
-            height: 100vh;
-            overflow-y: scroll;
-            padding-bottom: 90px; /* مسافة للفوتر */
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* الهيدر العلوي (Sticky) */
-        .header-layer {
-            position: sticky; top: 0; background: var(--bg);
-            padding: 15px 20px; display: flex; align-items: center;
-            justify-content: space-between; z-index: 1500;
-        }
-
-        .search-container {
-            flex: 1; background: var(--surface); margin: 0 15px;
-            padding: 8px 15px; border-radius: 20px; color: var(--text-gray);
-            font-size: 13px; display: flex; align-items: center; gap: 10px;
-        }
-
-        /* بانر العروض المنزلق (Slider Layer) */
-        .hero-slider {
-            display: flex; overflow-x: auto; gap: 15px; padding: 15px;
-            scroll-snap-type: x mandatory; scrollbar-width: none;
-        }
-        .hero-slider::-webkit-scrollbar { display: none; }
-        
-        .slide-card {
-            min-width: 88%; height: 150px; border-radius: 12px;
-            background: linear-gradient(135deg, #002d33, #00e5ff);
-            scroll-snap-align: center; padding: 20px;
-            display: flex; flex-direction: column; justify-content: flex-end;
-            position: relative; overflow: hidden;
-        }
-
-        /* شبكة الخدمات العميقة (Grid Layer) */
-        .services-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 20px; padding: 25px 20px; border-bottom: 8px solid #181a20;
-        }
-        .service-box { text-align: center; cursor: pointer; }
-        .service-box i { 
-            font-size: 26px; color: var(--neon); margin-bottom: 8px; 
-            display: block; transition: transform 0.2s;
-        }
-        .service-box:active i { transform: scale(0.9); }
-        .service-box span { font-size: 11px; color: #eaecef; font-weight: 500; }
-
-        /* منطقة الرادار (Whale Radar) */
-        .radar-zone {
-            margin: 20px; background: var(--surface); border-radius: 12px;
-            padding: 15px; border-right: 4px solid var(--neon);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        /* قائمة العملات الاحترافية (Market Listing) */
-        .market-tabs {
-            display: flex; gap: 25px; padding: 10px 20px;
-            border-bottom: 1px solid var(--border); overflow-x: auto;
-        }
-        .market-tab { 
-            color: var(--text-gray); font-size: 14px; font-weight: bold; 
-            white-space: nowrap; padding-bottom: 10px; cursor: pointer;
-        }
-        .market-tab.active { color: #fff; border-bottom: 2px solid var(--neon); }
-
-        .coin-item {
+        /* قائمة الأصول (Assets) */
+        .assets-section { margin-top: 30px; }
+        .asset-row {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.03);
         }
-        .coin-info b { font-size: 16px; }
-        .coin-info span { color: var(--text-gray); font-size: 12px; margin-right: 5px; }
-        
-        .price-col { text-align: left; }
-        .price-val { font-weight: bold; display: block; }
-        .change-val { font-size: 12px; color: var(--up); }
+        .asset-icon { width: 35px; height: 35px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-left: 12px; }
 
-        .trade-action-btn {
-            background: var(--up); color: #000; border: none;
-            padding: 8px 15px; border-radius: 4px; font-weight: 900;
-            font-size: 13px; cursor: pointer;
-        }
+        /* شريط سفلي ثابت */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: var(--bg); border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(5, 1fr); z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: var(--text-gray); text-decoration: none; }
+        .nav-item.active { color: var(--neon); }
     </style>
 </head>
 <body>
 
-    <div class="main-content">
-        <div class="header-layer">
-            <i class="fas fa-user-circle" style="font-size: 26px; color: var(--text-gray);"></i>
-            <div class="search-container">
-                <i class="fas fa-search"></i>
-                <span>بحث عن عملات، ميزات...</span>
+    <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin:0; font-size: 20px;">المحفظة</h2>
+        <i class="fas fa-history" style="color: var(--text-gray);"></i>
+    </div>
+
+    <div class="balance-card">
+        <small style="color: var(--text-gray);">إجمالي الرصيد المقدر (USDT)</small>
+        <div style="font-size: 32px; font-weight: 900; margin: 10px 0;">0.00 <span style="font-size: 16px; color: var(--neon);">USDT</span></div>
+        <div style="color: var(--text-gray); font-size: 14px;">≈ 0.00 BTC</div>
+    </div>
+
+    <div class="action-grid">
+        <div class="action-btn"><i class="fas fa-arrow-down"></i><span>إيداع</span></div>
+        <div class="action-btn"><i class="fas fa-arrow-up"></i><span>سحب</span></div>
+        <div class="action-btn"><i class="fas fa-sync-alt"></i><span>تحويل</span></div>
+    </div>
+
+    <div class="connect-wallet-section">
+        <i class="fas fa-link" style="font-size: 24px; color: var(--neon);"></i>
+        <h4 style="margin: 10px 0;">ربط محفظة Web3</h4>
+        <p style="font-size: 12px; color: var(--text-gray); margin: 0;">هل تفضل التداول من محفظتك الخاصة؟ اربط Trust Wallet أو MetaMask الآن.</p>
+        <button class="connect-btn" onclick="connectWallet()">ربط المحفظة الخارجية</button>
+    </div>
+
+    <div class="assets-section">
+        <div style="padding: 0 20px 10px; font-weight: bold; border-bottom: 1px solid var(--border);">الأصول المملوكة</div>
+        
+        <div class="asset-row">
+            <div style="display: flex; align-items: center;">
+                <div class="asset-icon"><i class="fab fa-ethereum" style="color:#627EEA"></i></div>
+                <div><b>ETH</b><br><small style="color:var(--text-gray)">Ethereum</small></div>
             </div>
-            <div style="display: flex; gap: 15px;">
-                <i class="fas fa-qrcode"></i>
-                <i class="fas fa-bell"></i>
-            </div>
+            <div style="text-align: left;"><b>0.00</b><br><small style="color:var(--text-gray)">$0.00</small></div>
         </div>
 
-        <div class="hero-slider">
-            <div class="slide-card">
-                <h2 style="margin: 0; font-size: 18px;">رادار الحيتان V3</h2>
-                <p style="font-size: 12px; margin: 5px 0;">تتبع سيولة تفوق 5 مليون دولار لحظياً</p>
+        <div class="asset-row">
+            <div style="display: flex; align-items: center;">
+                <div class="asset-icon"><i class="fas fa-dollar-sign" style="color:var(--up)"></i></div>
+                <div><b>USDT</b><br><small style="color:var(--text-gray)">Tether</small></div>
             </div>
-            <div class="slide-card" style="background: var(--surface); border: 1px solid var(--neon);">
-                <h2 style="margin: 0; font-size: 18px; color: var(--neon);">بوت تيتانيوم 60</h2>
-                <p style="font-size: 12px; margin: 5px 0;">تداول آلي بذكاء اصطناعي فائق</p>
-            </div>
-        </div>
-
-        <div class="services-grid">
-            <div class="service-box"><i class="fas fa-university"></i><span>إيداع</span></div>
-            <div class="service-box"><i class="fas fa-robot"></i><span>البوت</span></div>
-            <div class="service-box"><i class="fas fa-satellite-dish"></i><span>الرادار</span></div>
-            <div class="service-box"><i class="fas fa-graduation-cap"></i><span>الأكاديمية</span></div>
-            <div class="service-box"><i class="fas fa-shield-alt"></i><span>الأمان</span></div>
-            <div class="service-box"><i class="fas fa-users"></i><span>المجتمع</span></div>
-            <div class="service-box"><i class="fas fa-headset"></i><span>الدعم</span></div>
-            <div class="service-box"><i class="fas fa-ellipsis-h"></i><span>المزيد</span></div>
-        </div>
-
-        <div class="radar-zone">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                <span style="font-weight:900; font-size:12px; color:var(--neon)">WHALE ACTIVITY</span>
-                <span style="color:var(--up); font-size:10px;">● LIVE</span>
-            </div>
-            <p style="font-size: 13px; margin: 0; line-height: 1.4;">
-                دخول سيولة بقيمة <b style="color:var(--up)">$12,450,000</b> على زوج <b style="color:var(--neon)">BTC/USDT</b>.
-                احتمالية انفجار سعري: 94%.
-            </p>
-        </div>
-
-        <div class="market-tabs">
-            <div class="market-tab active">الأكثر رواجاً</div>
-            <div class="market-tab">الرابحون</div>
-            <div class="market-tab">الخاسرون</div>
-            <div class="market-tab">حجم التداول</div>
-        </div>
-
-        <div class="coins-container">
-            <div class="coin-item">
-                <div class="coin-info"><b>BTC</b><span>/USDT</span><br><small style="color:var(--text-gray)">Vol: 45.2B</small></div>
-                <div class="price-col"><span class="price-val">64,520.10</span><span class="change-val">+2.15%</span></div>
-                <button class="trade-action-btn" onclick="location.href='trade.html'">تداول</button>
-            </div>
-            <div class="coin-item">
-                <div class="coin-info"><b>ETH</b><span>/USDT</span><br><small style="color:var(--text-gray)">Vol: 22.8B</small></div>
-                <div class="price-col"><span class="price-val">3,450.50</span><span class="change-val">+1.85%</span></div>
-                <button class="trade-action-btn" onclick="location.href='trade.html'">تداول</button>
-            </div>
-            <div class="coin-item">
-                <div class="coin-info"><b>SOL</b><span>/USDT</span></div>
-                <div class="price-col"><span class="price-val">145.20</span><span class="change-val" style="color:var(--down)">-0.50%</span></div>
-                <button class="trade-action-btn" onclick="location.href='trade.html'">تداول</button>
-            </div>
-            <div class="coin-item"><div><b>BNB</b><span>/USDT</span></div><button class="trade-action-btn">تداول</button></div>
-            <div class="coin-item"><div><b>ARB</b><span>/USDT</span></div><button class="trade-action-btn">تداول</button></div>
-            <div class="coin-item"><div><b>LINK</b><span>/USDT</span></div><button class="trade-action-btn">تداول</button></div>
-            <div class="coin-item"><div><b>DOGE</b><span>/USDT</span></div><button class="trade-action-btn">تداول</button></div>
-            <div class="coin-item"><div><b>PEPE</b><span>/USDT</span></div><button class="trade-action-btn">تداول</button></div>
-            <div class="coin-item"><div><b>SHIB</b><span>/USDT</span></div><button class="trade-action-btn">تداول</button></div>
-            <div class="coin-item"><div><b>AVAX</b><span>/USDT</span></div><button class="trade-action-btn">تداول</button></div>
+            <div style="text-align: left;"><b>0.00</b><br><small style="color:var(--text-gray)">$0.00</small></div>
         </div>
     </div>
 
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+        <a href="index.html" class="nav-item"><i class="fas fa-home"></i><span>الرئيسية</span></a>
         <a href="markets.html" class="nav-item"><i class="fas fa-chart-line"></i><span>الأسواق</span></a>
         <a href="trade.html" class="nav-item"><i class="fas fa-exchange-alt"></i><span>تداول</span></a>
         <a href="community.html" class="nav-item"><i class="fas fa-users"></i><span>المجتمع</span></a>
-        <a href="wallet.html" class="nav-item"><i class="fas fa-wallet"></i><span>المحفظة</span></a>
+        <a href="wallet.html" class="nav-item active"><i class="fas fa-wallet"></i><span>المحفظة</span></a>
     </nav>
+
+    <script>
+        function connectWallet() {
+            alert("جاري الاتصال بـ MetaMask... (هنا نربط مكتبة Web3.js)");
+            // مستقبلاً سنضع كود الربط الحقيقي هنا
+        }
+    </script>
 
 </body>
 </html>
