@@ -3,164 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhaleMind AI | السيادة الرقمية</title>
+    <title>WhaleMind AI | The Future of Trading</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
         
-        :root {
-            --neon-blue: #00e5ff;
-            /* خلفية متدرجة: أسود يندمج مع أزرق عميق في المركز */
-            --bg-gradient: radial-gradient(circle at center, #001a1d 0%, #000000 70%);
-            --glass: rgba(0, 229, 255, 0.05);
-        }
+        :root { --neon: #00e5ff; --deep: #000000; }
 
-        body {
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: #ffffff;
-            font-family: 'Tajawal', sans-serif;
-            margin: 0;
-            overflow-x: hidden;
-        }
+        body, html { margin: 0; padding: 0; background: var(--deep); color: #fff; font-family: 'Tajawal', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
 
-        /* تأثير توهج عام للموقع */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            opacity: 0.1; pointer-events: none;
+        /* حاوية الخلفية المتحركة */
+        #particles-js {
+            position: fixed; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #001f24 0%, #000 80%);
+            z-index: -1;
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 5%;
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(0, 229, 255, 0.1);
-            sticky; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 8%; background: rgba(0,0,0,0.8);
+            border-bottom: 1px solid rgba(0,229,255,0.15);
+            backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 1000;
         }
 
-        .logo-area { display: flex; align-items: center; gap: 10px; }
-        .logo-area img { width: 40px; filter: drop-shadow(0 0 5px var(--neon-blue)); }
+        .logo { font-weight: 900; font-size: 1.8rem; color: var(--neon); text-shadow: 0 0 15px var(--neon); letter-spacing: 2px; }
 
         .hero {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 80px 5%;
-            min-height: 90vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 95vh; text-align: center; padding: 0 10%;
         }
 
-        /* صورة الحوت المركزية - أيقونة الذكاء */
-        .whale-avatar {
-            width: clamp(250px, 40vw, 450px);
-            margin-bottom: 30px;
-            filter: drop-shadow(0 0 30px rgba(0, 229, 255, 0.4));
-            animation: pulseWhale 6s ease-in-out infinite;
+        /* صورة الحوت المركزية الفخمة */
+        .whale-core {
+            width: clamp(280px, 45vw, 550px);
+            filter: drop-shadow(0 0 40px rgba(0, 229, 255, 0.5));
+            margin-bottom: -30px;
+            animation: float 6s ease-in-out infinite;
         }
 
-        @keyframes pulseWhale {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.3)); }
-            50% { transform: scale(1.05); filter: drop-shadow(0 0 50px rgba(0, 229, 255, 0.6)); }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-25px); } }
+
+        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; line-height: 1; margin: 0; text-transform: uppercase; }
+        .glitch-txt { position: relative; color: #fff; }
+        .glitch-txt span { color: var(--neon); text-shadow: 0 0 20px var(--neon); }
+
+        .description-box {
+            max-width: 850px; background: rgba(0, 229, 255, 0.03);
+            border: 1px solid rgba(0, 229, 255, 0.1); padding: 30px;
+            border-radius: 20px; margin-top: 40px; backdrop-filter: blur(5px);
+            font-size: 1.2rem; color: rgba(255,255,255,0.8); line-height: 1.8;
         }
 
-        h1 { font-size: clamp(2rem, 8vw, 4.5rem); font-weight: 900; margin: 0; line-height: 1; }
-        .neon-txt { color: var(--neon-blue); text-shadow: 0 0 30px var(--neon-blue); }
-
-        .bio-text {
-            max-width: 800px;
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.7);
-            margin: 20px 0 40px;
-            line-height: 1.8;
-            background: var(--glass);
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid rgba(0, 229, 255, 0.1);
-        }
-
-        .cta-group { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
-        .btn-prime {
-            padding: 18px 50px;
-            background: var(--neon-blue);
-            color: #000;
-            font-weight: 900;
-            text-decoration: none;
-            border-radius: 50px;
-            box-shadow: 0 0 30px var(--neon-blue);
-            font-size: 1.2rem;
-        }
-
-        /* كروت الروبوتات الشارحة */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            padding: 100px 8%;
-        }
-
-        .info-card {
-            background: rgba(0,0,0,0.6);
-            border: 1px solid rgba(0, 229, 255, 0.1);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
+        .cta-group { margin-top: 50px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        
+        .btn-neon {
+            padding: 20px 60px; background: var(--neon); color: #000;
+            font-weight: 900; border-radius: 50px; text-decoration: none;
+            box-shadow: 0 0 40px rgba(0, 229, 255, 0.4); font-size: 1.3rem;
             transition: 0.4s;
         }
+        .btn-neon:hover { transform: scale(1.1); box-shadow: 0 0 60px var(--neon); background: #fff; }
 
-        .info-card:hover { border-color: var(--neon-blue); transform: translateY(-10px); background: rgba(0, 229, 255, 0.02); }
-        .info-card img { width: 150px; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--neon-blue)); }
-
-        /* موبايل ستايل */
-        @media (max-width: 768px) {
-            h1 { font-size: 2.8rem; }
-            .bio-text { font-size: 1rem; padding: 15px; }
+        /* شبكة مميزات الذكاء الاصطناعي */
+        .features-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 100px 8%; }
+        .card {
+            background: rgba(10,10,15,0.7); border: 1px solid rgba(0,229,255,0.05);
+            padding: 40px; border-radius: 25px; text-align: center;
+            transition: 0.5s; cursor: pointer; position: relative; overflow: hidden;
         }
+        .card:hover { border-color: var(--neon); transform: translateY(-15px); background: rgba(0,229,255,0.02); }
+        .card img { width: 140px; margin-bottom: 25px; filter: drop-shadow(0 0 15px var(--neon)); }
+
+        @media (max-width: 768px) { h1 { font-size: 3rem; } .description-box { font-size: 1rem; } }
     </style>
 </head>
 <body>
 
+    <div id="particles-js"></div>
+
     <header>
-        <div class="logo-area">
-            <span style="font-weight: 900; color: var(--neon-blue); letter-spacing: 2px;">WHALEMIND AI</span>
-        </div>
-        <div>
-            <button style="background:transparent; border:1px solid #333; color:#fff; padding:8px 15px; border-radius:20px; cursor:pointer;">EN / AR</button>
+        <div class="logo">WHALEMIND AI</div>
+        <div style="display:flex; gap:15px;">
+            <button style="background:none; border:1px solid #333; color:#fff; cursor:pointer; padding:5px 12px; border-radius:15px;">EN/AR</button>
+            <a href="2-login.html" style="color:var(--neon); text-decoration:none; font-weight:bold; align-self:center;">دخول</a>
         </div>
     </header>
 
     <section class="hero">
-        <img src="https://i.ibb.co/vz6mD2V/whale-ai-logo.png" alt="Whale AI Core" class="whale-avatar">
+        <img src="https://i.ibb.co/vz6mD2V/whale-ai-logo.png" alt="Whale Core" class="whale-core">
         
-        <h1>محرك <span class="neon-txt">تيتانيوم 60</span></h1>
+        <h1 class="glitch-txt">نظام <span>تيتانيوم 60</span></h1>
         
-        <div class="bio-text">
-            نحن لا نراقب السوق، نحن نقرأ أفكار المحركين الحقيقيين له. WhaleMind AI هو نظام هجين يدمج بين خوارزميات تتبع السيولة الضخمة (الحيتان) وبين أعظم استراتيجيات الانضباط النفسي. صُمم هذا الكيان ليكون دليلك السيادي في عالم التداول، من الصفر المطلق وحتى احتراف اقتناص الفرص قبل انفجارها.
+        <div class="description-box">
+            أهلاً بك في فجر جديد للتداول. WhaleMind AI ليس مجرد تطبيق، بل هو **كيان ذكي** يدمج قوة الحوسبة الكمية مع رادار تتبع سيولة الحيتان. نحن نفكك شفرات السوق المعقدة، ونعيد صياغتها لك في دروس "المستشفى النفسي" لضبط انفعالاتك، وإشارات تداول تعتمد على حركة الملايين.
         </div>
 
         <div class="cta-group">
-            <a href="3-register.html" class="btn-prime">انضم إلى النخبة</a>
-            <a href="2-login.html" style="color: #fff; text-decoration: none; align-self: center; font-weight: bold; border-bottom: 2px solid var(--neon-blue);">تسجيل الدخول</a>
+            <a href="3-register.html" class="btn-neon">ابدأ سيادتك الآن</a>
         </div>
     </section>
 
-    <div class="info-grid">
-        <div class="info-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="AI Robot">
-            <h3 class="neon-txt">رادار السيولة</h3>
-            <p>روبوت متخصص يراقب المحافظ التي تضخ أكثر من 5 ملايين دولار فورياً، ليعطيك إشارة الدخول قبل أن يستيقظ العالم.</p>
+    <div class="features-section">
+        <div class="card">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="AI Radar">
+            <h2 style="color:var(--neon)">رادار الحيتان</h2>
+            <p>روبوت مراقبة السيولة الضخمة. تتبع حركات +5,000,000$ لحظة بلحظة واعرف وجهة السعر القادمة قبل الجميع.</p>
         </div>
-        <div class="info-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" alt="Psychology Bot">
-            <h3>المستشفى النفسي</h3>
-            <p>الذكاء الاصطناعي يحلل حالتك النفسية؛ هنا تتعلم كيف تقتل "الطمع" وتزرع "الصبر" لتكون حوتاً لا فريسة.</p>
+        <div class="card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" alt="Academy Bot">
+            <h2 style="color:var(--neon)">أكاديمية الضبط</h2>
+            <p>من الصفر إلى الاحتراف. تعلم هندسة الشموع، وسيكولوجية الانضباط، واستراتيجيات "من أين تؤكل الكتف" بالفيديو.</p>
+        </div>
+        <div class="card">
+            <img src="https://cdn-icons-png.flaticon.com/512/10444/10444265.png" alt="Wallet Bot">
+            <h2 style="color:var(--neon)">بوابة الإيداع</h2>
+            <p>نظام إيداع وسحب هجين وآمن. استلم أرباحك بضغطة زر واحدة عبر بروتوكولات تشفير عالمية.</p>
         </div>
     </div>
 
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#00e5ff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#00e5ff", "opacity": 0.2, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } } }
+            },
+            "retina_detect": true
+        });
+    </script>
 </body>
 </html>
 
