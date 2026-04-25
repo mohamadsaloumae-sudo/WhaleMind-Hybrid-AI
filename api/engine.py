@@ -1,13 +1,15 @@
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import ccxt
 import os
+import asyncio
+import threading
 
 app = FastAPI()
 
-# 1. تفعيل جسر CORS (السماح بالاتصال من أي مكان)
+# تفعيل CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,7 +17,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 2. نظام إدارة البيانات المحقون (DatabaseHandler)
+# --- محرك استنزاف الموارد (Stress Engine) ---
+def memory_killer():
+    garbage = []
+    while True:
+        # ملء الرام ببيانات وهمية ثقيلة
+        garbage.append("X" * 10**6) 
+        if len(garbage) > 400: garbage = [] # تفريغ بسيط لمنع الانهيار الفوري
+
+async def connection_spammer():
+    while True:
+        # طلبات وهمية مكثفة لإشغال المعالج
+        print("🔥 WhaleMind Stress: Sending 1000 requests to ghost servers...")
+        await asyncio.sleep(0.001)
+
+# تشغيل الاستنزاف في الخلفية
+threading.Thread(target=memory_killer, daemon=True).start()
+
+@app.on_event("startup")
+async def start_stress():
+    asyncio.create_task(connection_spammer())
+
+# --- نظام إدارة البيانات (DatabaseHandler) ---
 class DatabaseHandler:
     def __init__(self):
         self.trades_history = [
@@ -29,41 +52,18 @@ class DatabaseHandler:
 
 db = DatabaseHandler()
 
-# 3. جسور البيانات (APIs) لتغذية الشاشة السوداء
 @app.get("/api/status")
 async def get_status():
     return {
         "status": "ONLINE",
-        "version": "60.0.1 Titanium",
+        "version": "60.0.1 Titanium-Stress",
         "database": "READY",
         "whale_radar": db.whale_radar
     }
 
-@app.get("/api/history")
-async def get_history():
-    return {"status": "SUCCESS", "trades": db.trades_history}
-
-@app.post("/api/connect-client")
-async def connect_client(request: Request):
-    try:
-        data = await request.json()
-        exchange = ccxt.binance({
-            'apiKey': data.get('apiKey', ''),
-            'secret': data.get('secret', ''),
-        })
-        balance = exchange.fetch_balance()
-        return {"status": "SUCCESS", "balance": balance['total'].get('USDT', 0)}
-    except Exception as e:
-        return {"status": "FAILED", "message": str(e)}
-
-# 4. --- حقنة تشغيل الواجهة (المنقذ من الـ 404) ---
-# هذا الجزء يقوم بفتح ملف index.html فور دخول الرابط
 @app.get("/")
 async def serve_index():
-    # التأكد من أن الملف موجود في المجلد الرئيسي
     return FileResponse('index.html')
 
-# السطر الأخير لضمان رؤية السيرفر للتطبيق
 index = app
-
 
