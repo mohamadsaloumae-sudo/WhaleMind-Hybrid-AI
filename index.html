@@ -3,159 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhaleMind AI | Standard V4</title>
+    <title>WhaleMind AI | Hybrid Global Terminal</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #0b0e11;
-            --bg-panel: #181a20;
-            --accent: #fcd535; /* اللون الذهبي القياسي */
-            --border: #2b3139;
-            --text-primary: #eaecef;
-            --text-secondary: #848e9c;
-            --green: #0ecb81;
+            --bg: #0b0e11; --panel: #181a20; --accent: #fcd535; --border: #2b3139;
+            --text: #eaecef; --dim: #848e9c; --green: #0ecb81; --red: #f6465d; --neon: #00d2ff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+
+        .app-container { display: flex; flex-direction: column; height: 100vh; }
+
+        /* 1. هيدر المواصفات العالمية (ثابت) */
+        header {
+            height: 60px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
+            background: var(--bg); position: sticky; top: 0; z-index: 1000;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        
-        body { background-color: var(--bg-main); color: var(--text-primary); height: 100vh; overflow: hidden; }
+        /* 2. منطقة المحركات (Viewport Engine) - هنا يحدث السحر */
+        #master-engine { flex: 1; overflow-y: auto; position: relative; }
 
-        /* 1. الكابينة العلوية (Fixed Header) */
-        .main-header {
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            background-color: var(--bg-main);
-            border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 1000;
-        }
-        .header-icons { display: flex; gap: 18px; color: var(--text-secondary); cursor: pointer; }
-        .logo-text { font-weight: bold; font-size: 18px; }
-        .logo-text span { color: var(--accent); }
+        /* طبقات النظام (المركزية، اللامركزية، الروبوت، الدردشة) */
+        .layer { display: none; height: 100%; animation: fadeIn 0.3s forwards; }
+        .layer.active { display: block; }
 
-        /* 2. منطقة المحرك (Engine Mount) - مساحة الشارت والعملات */
-        .engine-viewport {
-            height: calc(100vh - 125px); /* خصم الهيدر والبار السفلي */
-            overflow-y: auto;
-            padding: 15px;
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* كرت الرصيد الموحد الهجين */
-        .balance-card {
-            background-color: var(--bg-panel);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 25px;
-            text-align: right;
-            border: 1px solid var(--border);
+        /* 3. البار السفلي العالمي (الخمسة الثابتة) */
+        footer {
+            height: 65px; background: var(--panel); border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-around;
         }
-        .balance-label { color: var(--text-secondary); font-size: 13px; margin-bottom: 8px; }
-        .balance-amount { font-size: 32px; font-weight: bold; letter-spacing: 1px; }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; color: var(--dim); cursor: pointer; font-size: 10px; }
+        .nav-btn.active { color: var(--accent); }
+        .nav-btn i { font-size: 22px; margin-bottom: 4px; }
 
-        /* قائمة الأسواق (المقاسات العالمية) */
-        .market-section { margin-top: 10px; }
-        .section-title { font-size: 16px; margin-bottom: 15px; font-weight: bold; }
-        
-        .coin-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
+        /* 4. غرفة العمليات (المزيد - الهجين) */
+        .control-hub { 
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100%; 
+            background: var(--bg); z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px; overflow-y: auto;
         }
-        .coin-info { text-align: right; }
-        .coin-symbol { font-weight: bold; font-size: 15px; }
-        .coin-price { font-weight: bold; color: var(--green); font-size: 15px; }
+        .control-hub.open { right: 0; }
 
-        /* 3. شريط التحكم العالمي (5 Buttons) */
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; height: 65px;
-            background-color: var(--bg-panel);
-            border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 1000;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            color: var(--text-secondary); cursor: pointer; text-decoration: none;
-            flex: 1; transition: 0.2s;
-        }
-        .nav-item i { font-size: 20px; margin-bottom: 4px; }
-        .nav-item span { font-size: 10px; }
-        .nav-item.active { color: var(--text-primary); } /* الزر المختار */
-        
-        /* القائمة الجانبية (المزيد) */
-        .side-menu {
-            position: fixed; top: 0; right: -100%; width: 85%; height: 100%;
-            background: var(--bg-main); z-index: 2000; transition: 0.3s;
-            padding: 20px; border-left: 1px solid var(--border);
-        }
-        .side-menu.open { right: 0; }
+        /* مكونات التصميم العالمي */
+        .card { background: var(--panel); border-radius: 12px; padding: 15px; border: 1px solid var(--border); margin-bottom: 15px; }
+        .hub-section { margin-bottom: 25px; }
+        .section-label { color: var(--accent); font-size: 12px; font-weight: bold; margin-bottom: 12px; display: block; }
+        .menu-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: #1e2329; border-radius: 10px; margin-bottom: 8px; border: 1px solid transparent; transition: 0.2s; cursor: pointer; }
+        .menu-item:active { border-color: var(--accent); }
     </style>
 </head>
 <body>
 
-    <header class="main-header">
-        <div class="header-icons">
-            <i class="fas fa-bell"></i>
-            <i class="fas fa-globe"></i>
-        </div>
-        <div class="logo-text">WhaleMind <span>AI</span></div>
-        <div class="header-icons" onclick="toggleMenu()">
-            <i class="fas fa-bars"></i>
-        </div>
+<div class="app-container">
+    <header>
+        <div onclick="toggleHub()"><i class="fas fa-bars fa-lg"></i></div>
+        <div style="font-weight:bold; letter-spacing:1px;">WhaleMind <span style="color:var(--accent)">AI</span></div>
+        <div style="display:flex; gap:15px; color:var(--dim)"><i class="fas fa-search"></i><i class="fas fa-bell"></i></div>
     </header>
 
-    <main class="engine-viewport">
-        <div class="balance-card">
-            <div class="balance-label">الرصيد الموحد</div>
-            <div class="balance-amount">$0.00</div>
-        </div>
-
-        <div class="market-section">
-            <div class="section-title">أعلى العملات</div>
-            
-            <div class="coin-row">
-                <div class="coin-info"><span class="coin-symbol">BTC/USDT</span></div>
-                <div class="coin-price">$77,366.28</div>
+    <main id="master-engine">
+        
+        <div id="home-layer" class="layer active">
+            <div class="card" style="margin: 15px; border-right: 4px solid var(--accent);">
+                <small style="color:var(--dim)">الرصيد الموحد (Hybrid)</small>
+                <h2 style="font-size: 30px;">$0.00</h2>
             </div>
-
-            <div class="coin-row">
-                <div class="coin-info"><span class="coin-symbol">ETH/USDT</span></div>
-                <div class="coin-price">$3,850.12</div>
-            </div>
-
-            <div class="coin-row">
-                <div class="coin-info"><span class="coin-symbol">SOL/USDT</span></div>
-                <div class="coin-price">$145.45</div>
+            <div style="padding: 0 15px;">
+                <h4>الأسواق المباشرة</h4>
+                <div id="tradingview-placeholder" style="height:300px; background:#1e2329; border-radius:12px; margin-top:10px; border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; color:var(--dim)">
+                    [ محرك TradingView ]
+                </div>
             </div>
         </div>
+
+        <div id="trade-layer" class="layer">
+            <div style="padding:15px;">
+                <h3>منصة التنفيذ الهجينة</h3>
+                <div class="card" style="margin-top:20px;">[ واجهة البيع والشراء API ]</div>
+            </div>
+        </div>
+
+        <div id="social-layer" class="layer">
+            <div style="padding:15px;">
+                <h3>غرف الدردشة (200+ عضو)</h3>
+                <div class="menu-item"><i class="fas fa-comments"></i> <b>غرفة حيتان البيتكوين</b></div>
+                <div class="menu-item"><i class="fas fa-ad"></i> <b>مساحة إعلانية ممولة</b></div>
+            </div>
+        </div>
+
     </main>
 
-    <nav class="bottom-nav">
-        <div class="nav-item active"><i class="fas fa-home"></i><span>الرئيسية</span></div>
-        <div class="nav-item"><i class="fas fa-chart-line"></i><span>الأسواق</span></div>
-        <div class="nav-item"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
-        <div class="nav-item"><i class="fas fa-bolt"></i><span>العقود</span></div>
-        <div class="nav-item" onclick="toggleMenu()"><i class="fas fa-wallet"></i><span>المحفظة</span></div>
-    </nav>
-
-    <div id="sideMenu" class="side-menu">
+    <div id="control-hub" class="control-hub">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <h3 style="color:var(--accent)">الخدمات الهجينة</h3>
-            <i class="fas fa-times" onclick="toggleMenu()" style="font-size:22px; cursor:pointer;"></i>
+            <h3>غرفة التحكم والضبط</h3>
+            <i class="fas fa-times fa-lg" onclick="toggleHub()"></i>
         </div>
-        <div style="color:var(--text-secondary); font-size:14px;">جاهز لتركيب أنظمة الربط والاشتراكات...</div>
+
+        <div class="hub-section">
+            <span class="section-label">الربط والدمج الثلاثي</span>
+            <div class="menu-item" onclick="switchEngine('CEX')"><i class="fas fa-university"></i> منصات مركزية (Binance, OKX)</div>
+            <div class="menu-item" onclick="switchEngine('DEX')"><i class="fas fa-link"></i> منصات لامركزية (Uniswap)</div>
+            <div class="menu-item" onclick="switchEngine('WALLETS')"><i class="fas fa-wallet"></i> المحافظ (MetaMask, Trust)</div>
+        </div>
+
+        <div class="hub-section">
+            <span class="section-label">أنظمة الذكاء الاصطناعي</span>
+            <div class="menu-item"><i class="fas fa-robot"></i> ضبط الروبوت (AI Bot Control)</div>
+            <div class="menu-item"><i class="fas fa-users"></i> إعدادات نسخ الصفقات (Copy Trading)</div>
+            <div class="menu-item"><i class="fas fa-bolt"></i> رادار الحيتان (Whale Radar)</div>
+        </div>
+
+        <div class="hub-section">
+            <span class="section-label">الاشتراكات والسوشيال</span>
+            <div class="menu-item" style="color:var(--accent)"><i class="fas fa-gem"></i> باقات VIP والاشتراكات</div>
+            <div class="menu-item"><i class="fas fa-bullhorn"></i> إدارة الإعلانات</div>
+        </div>
     </div>
 
-    <script>
-        function toggleMenu() {
-            document.getElementById('sideMenu').classList.toggle('open');
-        }
-    </script>
+    <footer>
+        <div class="nav-btn active" onclick="navigate('home-layer', this)"><i class="fas fa-home"></i><span>الرئيسية</span></div>
+        <div class="nav-btn" onclick="navigate('social-layer', this)"><i class="fas fa-users"></i><span>الدردشة</span></div>
+        <div class="nav-btn" onclick="navigate('trade-layer', this)"><i class="fas fa-exchange-alt"></i><span>تداول</span></div>
+        <div class="nav-btn" onclick="navigate('futures', this)"><i class="fas fa-bolt"></i><span>عقود</span></div>
+        <div class="nav-btn" onclick="toggleHub()"><i class="fas fa-th-large"></i><span>المزيد</span></div>
+    </footer>
+</div>
+
+<script>
+    function toggleHub() { document.getElementById('control-hub').classList.toggle('open'); }
+
+    function navigate(layerId, btn) {
+        document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(layerId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    function switchEngine(type) {
+        alert("يتم الآن تحويل المحرك إلى: " + type);
+        toggleHub(); // العودة للشاشة الرئيسية بعد الضبط
+    }
+</script>
+
 </body>
 </html>
-
