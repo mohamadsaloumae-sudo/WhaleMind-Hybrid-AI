@@ -3,202 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhaleMind AI | Global Terminal</title>
+    <title>WhaleMind AI | Main Terminal</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --bg: #0b0e11; --surface: #1e2329; --input: #2b3139; --text: #eaecef; 
-            --text-gray: #848e9c; --neon: #f0b90b; --up: #0ecb81; --down: #f6465d; 
-            --border: #2b3139; --hover: #21262c;
+        /* نظام الألوان الصارم لباينانس PRO */
+        :root {
+            --bg-main: #0b0e11;        /* الخلفية العميقة */
+            --bg-card: #1e2329;        /* خلفية المربعات */
+            --text-gold: #f0b90b;      /* لون باينانس الأصفر */
+            --text-white: #eaecef;     /* النصوص الأساسية */
+            --text-muted: #848e9c;     /* النصوص الفرعية */
+            --line-border: #2b3139;    /* الحدود الفاصلة */
+            --green-up: #0ecb81;       /* صعود */
+            --red-down: #f6465d;       /* هبوط */
+            --hover-bg: #2b313a;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); font-family: 'Tajawal', sans-serif; overflow-x: hidden; line-height: 1.5; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body { background: var(--bg-main); color: var(--text-white); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
-        /* الهيدر العلوي بكل الأزرار */
-        .header { position: sticky; top: 0; background: var(--bg); z-index: 2000; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-        .user-profile { position: relative; }
-        .user-profile i { font-size: 22px; color: var(--text-gray); }
-        .user-profile::after { content: ''; position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: var(--down); border-radius: 50%; border: 2px solid var(--bg); }
+        /* الهيدر العلوي */
+        header { position: sticky; top: 0; background: var(--bg-main); z-index: 1000; padding: 12px 15px; display: flex; align-items: center; border-bottom: 1px solid var(--line-border); }
+        .profile-icon { font-size: 24px; color: var(--text-muted); cursor: pointer; }
+        .search-input-wrapper { flex: 1; background: var(--bg-card); margin: 0 15px; padding: 8px 12px; border-radius: 20px; display: flex; align-items: center; gap: 10px; color: var(--text-muted); font-size: 13px; border: 1px solid transparent; }
+        .header-actions { display: flex; gap: 15px; color: var(--text-muted); font-size: 18px; }
+
+        /* المربعات الثلاثية - تجهيز الربط للسعر اللحظي */
+        .hot-tickers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; }
+        .ticker-widget { background: var(--bg-card); padding: 12px 10px; border-radius: 12px; border: 1px solid var(--line-border); text-align: center; position: relative; }
+        .ticker-name { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+        .ticker-val { font-size: 15px; font-weight: 800; margin: 4px 0; color: var(--green-up); }
+        .ticker-chg { font-size: 11px; font-weight: bold; color: var(--green-up); }
+
+        /* رادار الحيتان - البنية التحتية للأخبار */
+        .whale-radar-bar { background: rgba(240, 185, 11, 0.05); padding: 10px 15px; border-bottom: 1px solid var(--line-border); display: flex; align-items: center; gap: 12px; }
+        .radar-label { background: var(--text-gold); color: #000; font-size: 10px; font-weight: 900; padding: 2px 6px; border-radius: 4px; }
+        marquee { font-size: 12px; color: var(--text-gold); font-weight: 500; }
+
+        /* شبكة الخدمات (المزيد) - أيقونات مفصلة */
+        .quick-services { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 20px 15px; border-bottom: 8px solid #181a20; }
+        .service-node { text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .service-node i { font-size: 22px; color: var(--text-gold); }
+        .service-node span { font-size: 11px; font-weight: 500; }
+
+        /* التبويبات مع الانزلاق المرن */
+        .market-tabs-sticky { position: sticky; top: 58px; background: var(--bg-main); z-index: 900; border-bottom: 1px solid var(--line-border); }
+        .tabs-flex { display: flex; gap: 25px; padding: 0 15px; overflow-x: auto; scrollbar-width: none; }
+        .tabs-flex::-webkit-scrollbar { display: none; }
+        .tab-item { padding: 15px 0; font-size: 14px; font-weight: 700; color: var(--text-muted); white-space: nowrap; cursor: pointer; position: relative; }
+        .tab-item.active { color: var(--text-white); }
+        .tab-item.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--text-gold); }
+
+        /* قائمة العملات - العمق والتفاصيل الصغيره */
+        .market-list { padding-bottom: 80px; }
+        .coin-entry { display: flex; justify-content: space-between; align-items: center; padding: 16px 15px; border-bottom: 1px solid rgba(255,255,255,0.02); transition: 0.2s; }
+        .coin-entry:active { background: var(--hover-bg); }
         
-        .search-container { flex: 1; background: var(--surface); margin: 0 12px; padding: 8px 12px; border-radius: 20px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-gray); border: 1px solid transparent; transition: 0.3s; }
-        .search-container:focus-within { border-color: var(--neon); }
+        .c-info { display: flex; align-items: center; gap: 12px; }
+        .c-star { font-size: 12px; color: var(--text-muted); }
+        .c-star.active { color: var(--text-gold); }
+        .c-main-title { font-size: 15px; font-weight: 800; }
+        .c-sub-vol { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
 
-        /* المربعات الثلاثية - العمق والوميض */
-        .market-overview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; background: linear-gradient(to bottom, #181a20, var(--bg)); }
-        .ticker-box { background: var(--surface); padding: 12px 10px; border-radius: 12px; border: 1px solid var(--border); transition: transform 0.2s; position: relative; overflow: hidden; }
-        .ticker-box:active { transform: scale(0.95); }
-        .ticker-name { font-size: 11px; color: var(--text-gray); font-weight: 500; }
-        .ticker-val { font-size: 15px; font-weight: 900; margin: 4px 0; letter-spacing: -0.5px; }
-        .ticker-pct { font-size: 11px; font-weight: bold; }
+        .c-price-box { text-align: left; flex: 1; padding-left: 20px; }
+        .p-main { font-size: 15px; font-weight: 700; display: block; }
+        .p-usd { font-size: 11px; color: var(--text-muted); }
 
-        /* شريط الخدمات (المزيد بـ 8 أيقونات) */
-        .service-hub { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 20px 15px; background: var(--bg); }
-        .s-node { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-        .s-node i { font-size: 24px; color: var(--neon); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; transition: 0.3s; }
-        .s-node:active i { background: var(--hover); }
-        .s-node span { font-size: 11px; color: var(--text); font-weight: 500; }
+        .c-change-box { min-width: 80px; text-align: right; }
+        .pct-badge { width: 75px; padding: 8px 0; border-radius: 4px; font-weight: 900; font-size: 13px; display: inline-block; text-align: center; }
+        .up-bg { background: var(--green-up); color: #000; }
+        .down-bg { background: var(--red-down); color: #fff; }
 
-        /* البانر الإعلاني المتحرك */
-        .promo-banner { margin: 0 15px; height: 100px; border-radius: 12px; background: linear-gradient(135deg, #2b3139 0%, #1e2329 100%); display: flex; align-items: center; padding: 20px; position: relative; border: 1px solid var(--border); }
-        .promo-banner::before { content: 'PRO'; position: absolute; top: 10px; left: 10px; background: var(--neon); color: #000; font-size: 8px; padding: 2px 5px; border-radius: 4px; font-weight: 900; }
-
-        /* رادار الحيتان - شريط متحرك */
-        .whale-ticker { padding: 10px 15px; font-size: 11px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); background: #161a1e; }
-        .whale-ticker i { color: var(--neon); font-size: 14px; }
-        .whale-ticker marquee { color: var(--neon); font-weight: bold; }
-
-        /* التبويبات مع المرونة (Sticky) */
-        .market-tabs-container { position: sticky; top: 54px; background: var(--bg); z-index: 100; border-bottom: 1px solid var(--border); }
-        .tabs-list { display: flex; gap: 25px; padding: 0 15px; overflow-x: auto; scrollbar-width: none; }
-        .tabs-list::-webkit-scrollbar { display: none; }
-        .tab-btn { padding: 15px 0; font-size: 14px; font-weight: 700; color: var(--text-gray); white-space: nowrap; cursor: pointer; position: relative; }
-        .tab-btn.active { color: var(--text); }
-        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--neon); border-radius: 2px; }
-
-        /* قائمة العملات - التفاصيل الدقيقة */
-        .list-container { padding-bottom: 100px; }
-        .row-coin { display: flex; justify-content: space-between; align-items: center; padding: 16px 15px; border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.2s; }
-        .row-coin:active { background: var(--hover); }
-        
-        .coin-identity { display: flex; align-items: center; gap: 12px; }
-        .coin-icon-placeholder { width: 32px; height: 32px; background: var(--surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); font-size: 12px; font-weight: 900; }
-        
-        .coin-names { display: flex; flex-direction: column; }
-        .sym { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 4px; }
-        .vol-cap { font-size: 10px; color: var(--text-gray); margin-top: 2px; }
-
-        .coin-pricing { text-align: left; flex: 1; padding-left: 20px; }
-        .cur-p { font-size: 15px; font-weight: 700; display: block; }
-        .cur-usd { font-size: 11px; color: var(--text-gray); }
-
-        .coin-change { min-width: 80px; text-align: right; }
-        .change-pill { padding: 8px 0; width: 75px; border-radius: 4px; font-weight: 900; font-size: 13px; display: inline-block; text-align: center; }
-        .p-up { background: var(--up); color: #000; }
-        .p-down { background: var(--down); color: #fff; }
-
-        /* الفوتر السفلي */
-        .navbar { position: fixed; bottom: 0; width: 100%; height: 70px; background: var(--bg); border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(5, 1fr); z-index: 3000; }
-        .nav-link { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: var(--text-gray); text-decoration: none; transition: 0.2s; }
-        .nav-link i { font-size: 20px; margin-bottom: 5px; }
-        .nav-link.active { color: var(--neon); }
+        /* الفوتر العالمي */
+        .bottom-nav-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: var(--bg-main); border-top: 1px solid var(--line-border); display: grid; grid-template-columns: repeat(5, 1fr); z-index: 2000; }
+        .nav-node { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: var(--text-muted); text-decoration: none; }
+        .nav-node i { font-size: 20px; margin-bottom: 4px; }
+        .nav-node.active { color: var(--text-gold); }
     </style>
 </head>
 <body>
 
-    <header class="header">
-        <div class="user-profile"><i class="fas fa-user-circle"></i></div>
-        <div class="search-container">
-            <i class="fas fa-search"></i>
-            <span>BTC, ETH, SOL...</span>
-        </div>
-        <div style="display:flex; gap:18px; color:var(--text-gray)">
+    <header>
+        <div class="profile-icon"><i class="fas fa-user-circle"></i></div>
+        <div class="search-input-wrapper"><i class="fas fa-search"></i><span>BTC, ETH, PEPE...</span></div>
+        <div class="header-actions">
             <i class="fas fa-qrcode"></i>
-            <i class="fas fa-headset"></i>
             <i class="fas fa-bell"></i>
         </div>
     </header>
 
-    <div class="whale-ticker">
-        <i class="fas fa-satellite-dish"></i>
-        <marquee scrollamount="4">WhaleMind AI: اكتشاف دخول سيولة ضخمة (50M+) على زوج PEPE/USDT .. فرصة انفجار سعري قريبة!</marquee>
+    <div class="whale-radar-bar">
+        <span class="radar-label">RADAR</span>
+        <marquee scrollamount="4">تنبيه حيتان WhaleMind: دخول سيولة بقيمة 45,000,000 USDT على شبكة Ethereum الآن.</marquee>
     </div>
 
-    <section class="market-overview">
-        <div class="ticker-box">
+    <section class="hot-tickers">
+        <div class="ticker-widget" id="top-btc">
             <span class="ticker-name">BTC / USDT</span>
-            <div class="ticker-val price-up" style="color:var(--up)">64,520.10</div>
-            <div class="ticker-pct" style="color:var(--up)">+2.45%</div>
+            <div class="ticker-val">64,520.10</div>
+            <div class="ticker-chg">+2.45%</div>
         </div>
-        <div class="ticker-box">
+        <div class="ticker-widget" id="top-eth">
             <span class="ticker-name">ETH / USDT</span>
-            <div class="ticker-val price-down" style="color:var(--down)">3,450.00</div>
-            <div class="ticker-pct" style="color:var(--down)">-1.12%</div>
+            <div class="ticker-val" style="color:var(--red-down)">3,450.00</div>
+            <div class="ticker-chg" style="color:var(--red-down)">-1.12%</div>
         </div>
-        <div class="ticker-box">
+        <div class="ticker-widget" id="top-sol">
             <span class="ticker-name">SOL / USDT</span>
-            <div class="ticker-val" style="color:var(--up)">145.28</div>
-            <div class="ticker-pct" style="color:var(--up)">+5.18%</div>
+            <div class="ticker-val">145.28</div>
+            <div class="ticker-chg">+5.18%</div>
         </div>
     </section>
 
-    <div class="promo-banner">
-        <div style="z-index:1">
-            <h4 style="color:var(--neon)">بوت التداول الذكي</h4>
-            <p style="font-size:11px; color:var(--text-gray)">فعل استراتيجية الحيتان بضغطة زر</p>
-        </div>
-        <i class="fas fa-robot" style="position:absolute; left:20px; font-size:50px; opacity:0.2"></i>
-    </div>
-
-    <nav class="service-hub">
-        <div class="s-node"><i class="fas fa-bolt"></i><span>تداول آلي</span></div>
-        <div class="s-node"><i class="fas fa-coins"></i><span>أرباح</span></div>
-        <div class="s-node"><i class="fas fa-users"></i><span>P2P</span></div>
-        <div class="s-node"><i class="fas fa-rocket"></i><span>Launchpad</span></div>
-        <div class="s-node"><i class="fas fa-shield-alt"></i><span>أمان</span></div>
-        <div class="s-node"><i class="fas fa-gift"></i><span>مكافآت</span></div>
-        <div class="s-node"><i class="fas fa-id-card"></i><span>البطاقة</span></div>
-        <div class="s-node" onclick="alert('كل الخدمات المتاحة...')"><i class="fas fa-th-large"></i><span>المزيد</span></div>
+    <nav class="quick-services">
+        <div class="service-node"><i class="fas fa-bolt"></i><span>تداول آلي</span></div>
+        <div class="service-node"><i class="fas fa-robot"></i><span>الرادار</span></div>
+        <div class="service-node"><i class="fas fa-users"></i><span>P2P</span></div>
+        <div class="service-node"><i class="fas fa-th-large"></i><span>المزيد</span></div>
     </nav>
 
-    <div class="market-tabs-container">
-        <div class="tabs-list">
-            <div class="tab-btn active">المفضلة</div>
-            <div class="tab-btn">الرائجة</div>
-            <div class="tab-btn">الرابحون</div>
-            <div class="tab-btn">الخاسرون</div>
-            <div class="tab-btn">جديد</div>
-            <div class="tab-btn">حجم 24س</div>
+    <div class="market-tabs-sticky">
+        <div class="tabs-flex">
+            <div class="tab-item active">المفضلة</div>
+            <div class="tab-item">الرائجة</div>
+            <div class="tab-item">الرابحون</div>
+            <div class="tab-item">الخاسرون</div>
+            <div class="tab-item">جديد</div>
+            <div class="tab-item">حجم 24س</div>
         </div>
     </div>
 
-    <main class="list-container">
-        <div class="row-coin">
-            <div class="coin-identity">
-                <i class="fas fa-star" style="color:var(--neon); font-size:12px;"></i>
-                <div class="coin-names">
-                    <span class="sym">BTC <small style="color:var(--text-gray)">/USDT</small></span>
-                    <span class="vol-cap">Vol: 45.28B</span>
+    <main class="market-list">
+        <div class="coin-entry">
+            <div class="c-info">
+                <i class="fas fa-star c-star active"></i>
+                <div>
+                    <span class="c-main-title">BTC <small style="color:var(--text-muted)">/USDT</small></span>
+                    <div class="c-sub-vol">حجم التداول: 45.2B</div>
                 </div>
             </div>
-            <div class="coin-pricing">
-                <span class="cur-p">64,520.10</span>
-                <span class="cur-usd">$64,520.10</span>
+            <div class="c-price-box">
+                <span class="p-main">64,520.10</span>
+                <span class="p-usd">$64,520.10</span>
             </div>
-            <div class="coin-change">
-                <span class="change-pill p-up">+2.45%</span>
+            <div class="c-change-box">
+                <span class="pct-badge up-bg">+2.45%</span>
             </div>
         </div>
 
-        <div class="row-coin">
-            <div class="coin-identity">
-                <i class="fas fa-star" style="color:var(--text-gray); font-size:12px;"></i>
-                <div class="coin-names">
-                    <span class="sym">ETH <small style="color:var(--text-gray)">/USDT</small></span>
-                    <span class="vol-cap">Vol: 18.1B</span>
+        <div class="coin-entry">
+            <div class="c-info">
+                <i class="fas fa-star c-star"></i>
+                <div>
+                    <span class="c-main-title">ETH <small style="color:var(--text-muted)">/USDT</small></span>
+                    <div class="c-sub-vol">حجم التداول: 18.1B</div>
                 </div>
             </div>
-            <div class="coin-pricing">
-                <span class="cur-p">3,450.00</span>
-                <span class="cur-usd">$3,450.00</span>
+            <div class="c-price-box">
+                <span class="p-main" style="color:var(--red-down)">3,450.00</span>
+                <span class="p-usd">$3,450.00</span>
             </div>
-            <div class="coin-change">
-                <span class="change-pill p-down">-1.12%</span>
+            <div class="c-change-box">
+                <span class="pct-badge down-bg">-1.12%</span>
             </div>
         </div>
-
-        <div class="row-coin"><div><b>SOL</b><br><small>Vol: 5B</small></div><div class="coin-pricing">145.28</div><div class="coin-change"><span class="change-pill p-up">+5.18%</span></div></div>
-        <div class="row-coin"><div><b>BNB</b><br><small>Vol: 1B</small></div><div class="coin-pricing">592.40</div><div class="coin-change"><span class="change-pill p-up">+0.80%</span></div></div>
-        <div class="row-coin"><div><b>PEPE</b><br><small>Vol: 800M</small></div><div class="coin-pricing">0.00001</div><div class="coin-change"><span class="change-pill p-down">-8.20%</span></div></div>
+        
+        <div class="coin-entry">
+            <div class="c-info"><i class="fas fa-star c-star active"></i><div><span class="c-main-title">BNB</span><div class="c-sub-vol">Vol: 1.2B</div></div></div>
+            <div class="c-price-box"><span class="p-main">592.40</span><span class="p-usd">$592.40</span></div>
+            <div class="c-change-box"><span class="pct-badge up-bg">+0.80%</span></div>
+        </div>
     </main>
 
-    <nav class="navbar">
-        <a href="index.html" class="nav-link active"><i class="fas fa-home"></i>الرئيسية</a>
-        <a href="markets.html" class="nav-link"><i class="fas fa-chart-line"></i>الأسواق</a>
-        <a href="trade.html" class="nav-link"><i class="fas fa-exchange-alt"></i>تداول</a>
-        <a href="futures.html" class="nav-link"><i class="fas fa-bolt"></i>العقود</a>
-        <a href="wallet.html" class="nav-link"><i class="fas fa-wallet"></i>المحفظة</a>
+    <nav class="bottom-nav-bar">
+        <a href="index.html" class="nav-node active"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+        <a href="markets.html" class="nav-node"><i class="fas fa-chart-line"></i><span>الأسواق</span></a>
+        <a href="pro_trade.html" class="nav-node"><i class="fas fa-exchange-alt"></i><span>تداول</span></a>
+        <a href="futures.html" class="nav-node"><i class="fas fa-bolt"></i><span>العقود</span></a>
+        <a href="wallet.html" class="nav-node"><i class="fas fa-wallet"></i><span>المحفظة</span></a>
     </nav>
 
 </body>
