@@ -1,13 +1,15 @@
 {
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/engine.py"
+      "src": "api/engine.py",
+      "use": "@vercel/python"
     }
   ],
-  "functions": {
-    "api/engine.py": {
-      "runtime": "vercel-python@0.0.6"
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/engine.py"
     }
-  }
+  ]
 }
