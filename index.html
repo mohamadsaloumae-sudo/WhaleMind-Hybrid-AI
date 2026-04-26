@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhaleMind AI | مركز السيطرة</title>
+    <title>WhaleMind AI | Titanium v2.3</title>
     <style>
         :root {
             --bg-black: #050505;
             --neon-blue: #00d2ff;
+            --neon-gold: #ffc107;
             --neon-green: #00ff41;
-            --neon-red: #ff0055;
-            --dark-gray: #1a1a1a;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
         body {
-            background-color: var(--bg-black);
-            color: var(--neon-blue);
-            font-family: 'Courier New', monospace;
+            background: radial-gradient(circle at center, #111, #000);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -24,131 +24,129 @@
             overflow: hidden;
         }
 
+        /* الطبقة العلوية الزجاجية */
         .header {
-            padding: 15px 25px;
-            border-bottom: 2px solid var(--neon-blue);
+            padding: 15px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--neon-blue);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 210, 255, 0.05);
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+            z-index: 100;
         }
 
-        .status-dot {
-            width: 10px; height: 10px; background-color: var(--neon-green);
-            border-radius: 50%; display: inline-block;
-            box-shadow: 0 0 10px var(--neon-green);
-            animation: pulse 1.5s infinite;
+        /* الرادار ثلاثي الأبعاد */
+        .radar-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 50%;
+            border: 2px solid var(--neon-blue);
+            background: repeating-conic-gradient(from 0deg, rgba(0,210,255,0.1) 0deg 30deg, transparent 30deg 60deg);
+            box-shadow: 0 0 30px rgba(0,210,255,0.2), inset 0 0 50px rgba(0,210,255,0.1);
+            animation: rotateRadar 4s linear infinite;
         }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        @keyframes rotateRadar { 100% { transform: rotate(360deg); } }
 
-        .main-container {
-            display: grid; grid-template-columns: 1fr 350px;
-            gap: 20px; padding: 20px; flex-grow: 1; overflow: hidden;
+        /* منطقة البيانات (بدون تداخل) */
+        .main-display {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .radar-panel {
-            border: 1px solid var(--neon-blue);
-            background: rgba(0, 210, 255, 0.02);
-            padding: 20px; overflow-y: auto;
+        /* بطاقات البيانات الشفافة */
+        .whale-card {
+            background: var(--glass);
+            border: 1px solid rgba(0,210,255,0.2);
+            border-right: 5px solid var(--neon-gold);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideUp 0.3s ease;
         }
 
-        .alert-card {
-            background: rgba(255, 0, 85, 0.1);
-            border-right: 4px solid var(--neon-red);
-            margin-bottom: 15px; padding: 15px;
-            animation: slideIn 0.4s ease-out;
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } }
+
+        /* الأزرار الخمسة العالمية */
+        .nav-bar {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            background: #000;
+            padding: 10px;
+            border-top: 1px solid #333;
         }
 
-        @keyframes slideIn { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-        .whale-value { color: var(--neon-red); font-weight: bold; font-size: 1.2em; }
-
-        .logs-panel {
-            border: 1px solid var(--dark-gray);
-            background: #000; padding: 15px;
-            font-size: 0.85em; color: #888; overflow-y: auto;
+        .nav-btn {
+            background: linear-gradient(145deg, #1a1a1a, #000);
+            border: 1px solid #444;
+            color: var(--neon-blue);
+            padding: 10px 2px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        .log-entry { margin-bottom: 5px; border-bottom: 1px solid #111; padding-bottom: 2px; }
-        .log-time { color: var(--neon-blue); margin-left: 10px; }
-
-        .footer-ticker {
-            height: 30px; background: var(--neon-blue);
-            color: #000; display: flex; align-items: center;
-            font-weight: bold; padding: 0 20px; font-size: 0.9em;
-        }
+        .nav-btn:active { transform: scale(0.9); box-shadow: 0 0 10px var(--neon-blue); }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div style="font-size: 1.5em; font-weight: bold; letter-spacing: 2px;">WHALEMIND <span style="color:#fff">AI</span></div>
-        <div>
-            <span class="status-dot"></span>
-            <span id="sys-text">النظام متصل: TITANIUM V60</span>
-        </div>
+        <div style="font-weight: bold;">WHALEMIND <span style="color:var(--neon-blue)">AI</span></div>
+        <div style="font-size: 0.8rem;"><span style="color:var(--neon-green)">●</span> ACTIVE v2.3</div>
     </div>
 
-    <div class="main-container">
-        <div class="radar-panel" id="radar-screen">
-            <h2 style="margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px;">📡 رادار الحيتان المباشر</h2>
-            <div id="alerts-container">
-                <div style="text-align: center; margin-top: 50px; color: #444;">بانتظار وصول البيانات من المحرك...</div>
-            </div>
-        </div>
+    <div class="radar-container" id="radar"></div>
 
-        <div class="logs-panel" id="log-screen">
-            <div class="log-entry"><span class="log-time">[00:00:01]</span> تشغيل واجهة TITANIUM...</div>
-        </div>
+    <div class="main-display" id="data-screen">
+        <div style="text-align:center; color:#666; margin-top:20px;">جاري الاتصال بمحرك التيتانيوم...</div>
     </div>
 
-    <div class="footer-ticker">
-        أحدث حركة: <span id="ticker-move">جاري المسح...</span>
+    <div class="nav-bar">
+        <div class="nav-btn" onclick="window.location.reload()">🔄 الرادار</div>
+        <div class="nav-btn" onclick="alert('تحليل الذكاء الاصطناعي نشط')">🧠 التحليل</div>
+        <div class="nav-btn" onclick="window.open('https://t.me/bot_WhaleMindAI')">💎 القناة</div>
+        <div class="nav-btn" onclick="alert('نظام الدفع TRC20 مؤمن')">💰 المحفظة</div>
+        <div class="nav-btn" onclick="alert('الإعدادات الإدارية')">⚙️ الإدارة</div>
     </div>
 
     <script>
-        async function fetchWhaleData() {
+        // دالة جلب البيانات الحقيقية
+        async function updateUI() {
             try {
                 const response = await fetch('/api/status');
                 const data = await response.json();
-                
-                if (data.whale_radar) {
-                    const container = document.getElementById('alerts-container');
-                    if (data.whale_radar.length > 0 && container.innerText.includes("بانتظار")) container.innerHTML = '';
+                const screen = document.getElementById('data-screen');
 
+                if (data.whale_radar && data.whale_radar.length > 0) {
+                    screen.innerHTML = ''; // مسح رسالة التحميل
                     data.whale_radar.forEach(whale => {
-                        const id = `w-${whale.pair}-${whale.amount}`.replace(/[^a-zA-Z0-9]/g, '');
-                        if (!document.getElementById(id)) {
-                            const card = document.createElement('div');
-                            card.id = id;
-                            card.className = 'alert-card';
-                            card.innerHTML = `
-                                <div style="display:flex; justify-content:space-between;">
-                                    <span>💎 رصد عملة: <b>${whale.pair}</b></span>
-                                    <span class="whale-value">${whale.amount}</span>
+                        screen.innerHTML += `
+                            <div class="whale-card">
+                                <div>
+                                    <span style="color:#888; font-size:0.7rem;">[${new Date().toLocaleTimeString()}]</span><br>
+                                    <b>${whale.pair}</b>
                                 </div>
-                            `;
-                            container.prepend(card);
-                            document.getElementById('ticker-move').innerText = `${whale.pair} - ${whale.amount}`;
-                            addLog(`رصد حركة حوت: ${whale.pair}`);
-                        }
+                                <div style="color:var(--neon-gold); font-weight:bold;">${whale.amount}</div>
+                            </div>
+                        `;
                     });
                 }
-            } catch (err) { console.log("Waiting..."); }
+            } catch (e) { console.log("Re-syncing..."); }
         }
-
-        function addLog(msg) {
-            const logs = document.getElementById('log-screen');
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            entry.innerHTML = `<span class="log-time">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
-            logs.prepend(entry);
-        }
-
-        setInterval(fetchWhaleData, 3000);
-        fetchWhaleData();
+        setInterval(updateUI, 3000);
     </script>
 </body>
 </html>
