@@ -1,9 +1,0 @@
-fastapi
-uvicorn
-ccxt
-requests
-python-multipart
-cryptography
-httpx
-flask
-flask-cors
