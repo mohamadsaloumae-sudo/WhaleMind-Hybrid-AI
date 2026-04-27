@@ -1,43 +1,52 @@
-// WhaleMind Logic Engine - Unified Bridge
-// تم حقن الرابط المباشر لسيرفر ريل واي
-const API_URL = "https://Worker-production-179b.up.railway.app"; 
+const API_URL = "https://Worker-production-179b.up.railway.app";
+let currentUserEmail = "";
 
-async function startBot() {
-    const statusElement = document.getElementById('status');
-    statusElement.innerText = "جاري إرسال أمر التشغيل للسحاب...";
+// دالة تستقبل بيانات المستخدم من جوجل عند نجاح تسجيل الدخول
+async function handleCredentialResponse(response) {
+    const responsePayload = decodeJwtResponse(response.credential);
+    currentUserEmail = responsePayload.email;
+    
+    document.getElementById("login-section").classList.add("hidden");
+    document.getElementById("dashboard-section").classList.remove("hidden");
+    document.getElementById("user-name").innerText = responsePayload.name;
+    document.getElementById("system-status").innerText = "جاري مزامنة البيانات مع قاعدة Neon...";
+
+    // إرسال الإيميل للسيرفر لإنشاء/جلب الحساب
+    await triggerAction("LOGIN");
+}
+
+async function triggerAction(actionType) {
+    const statusText = document.getElementById("system-status");
+    statusText.innerText = "جاري الاتصال بالمحرك السحابي...";
 
     try {
-        // الاتصال المباشر مع ملف WhaleMind_API_Gateway في ريل واي
-        const response = await fetch(`${API_URL}/execute`, {
+        const res = await fetch(`${API_URL}/api/action`, {
             method: 'POST',
-            mode: 'cors', // تفعيل العبور البرمجي
+            mode: 'cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                user_id: "User_Mobile_Samsung", // المعرف الخاص بك
-                action: "START",
-                is_demo: true
-            })
+            body: JSON.stringify({ email: currentUserEmail, action: actionType })
         });
-
-        const data = await response.json();
-        if (data.status === "success" || data.status === "active") {
-            statusElement.innerText = "WhaleMind يعمل الآن سحابياً.. النبض مستقر ✅";
-            statusElement.style.color = "#27ae60";
+        const data = await res.json();
+        
+        if(data.status === "success") {
+            statusText.innerText = data.message;
+            statusText.style.color = "#27ae60";
+            if(data.balance !== undefined) document.getElementById("gas-balance").innerText = data.balance + "$";
+            if(data.rank !== undefined) document.getElementById("user-rank").innerText = data.rank;
         }
     } catch (error) {
-        // في حال وجود مشكلة في الربط أو الـ CORS
-        console.error("Connection Error:", error);
-        statusElement.innerText = "فشل الاتصال بالسيرفر.. تأكد من تفعيل المنظومة في Railway.";
-        statusElement.style.color = "#e74c3c";
+        statusText.innerText = "خطأ في الاتصال بسيرفر Railway.";
+        statusText.style.color = "#c0392b";
     }
 }
 
-// وظيفة تحديث النبض والغاز تلقائياً كل دقيقة (Heartbeat)
-setInterval(async () => {
-    try {
-        console.log("يتم الآن تحديث حالة النبض من WhaleMind...");
-        // سيقوم الروبوت بتحديث الحالة في قاعدة بيانات Neon وعرضها هنا
-    } catch (e) {
-        console.log("بانتظار استجابة السيرفر...");
-    }
-}, 60000);
+// دالة مساعدة لفك تشفير بيانات جوجل
+function decodeJwtResponse(token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+}
+
