@@ -1,34 +1,39 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <title>WhaleMind AI | لوحة التحكم</title>
+    <title>WhaleMind AI | بوابة الدخول</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
-        .pulse-dot { height: 12px; width: 12px; background-color: #2ecc71; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #2ecc71; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); } }
-        .card { border: 1px solid #ddd; padding: 20px; border-radius: 10px; background: #fff; text-align: center; }
+        body { font-family: 'Arial', sans-serif; background: #f4f7f9; text-align: center; padding: 50px; }
+        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        .hidden { display: none; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; color: white; font-weight: bold; }
+        .btn-radar { background: #1a2a6c; }
+        .btn-recharge { background: #27ae60; }
     </style>
 </head>
-<body style="font-family: Arial; background: #f4f7f9;">
-    <div class="card">
-        <h2>إمبراطورية WhaleMind AI 🐋</h2>
-        <p><span class="pulse-dot"></span> الحالة: <strong id="status">الروبوت يراقب السوق...</strong></p>
-        <hr>
-        <div id="gas-info">رصيد الغاز: <strong>50.00$</strong></div>
-        <div id="demo-info">الصفقات التجريبية: <strong>0 / 10</strong></div>
-        <br>
-        <button onclick="connectWallet()" style="background: #1a2a6c; color: white; padding: 10px 20px; border: none; border-radius: 5px;">ربط محفظة (Web3)</button>
-        <button onclick="startBot()" style="background: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 5px;">تفعيل التداول الآلي</button>
+<body>
+    <div class="card" id="login-section">
+        <h2>إمبراطورية WhaleMind 🐋</h2>
+        <p>يرجى تسجيل الدخول للوصول إلى الرادار</p>
+        <div id="g_id_onload"
+             data-client_id="ضع_مفتاح_جوجل_كلاينت_هنا.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse">
+        </div>
+        <div class="g_id_signin" data-type="standard"></div>
     </div>
 
-    <script>
-        function startBot() {
-            alert("بدأت عملية التداول السحابي.. يمكنك إغلاق هاتفك الآن!");
-            document.getElementById('status').innerText = "جاري صيد الفرص بدقة +95%...";
-        }
-        async function connectWallet() {
-            // هنا سيضع الـ Pro كود ربط MetaMask الفعلي
-            alert("جاري الاتصال بمحفظتك لتأمين الغاز...");
-        }
-    </script>
+    <div class="card hidden" id="dashboard-section">
+        <h2>مرحباً، <span id="user-name">شريك النجاح</span> 👑</h2>
+        <p>رصيد الغاز: <strong id="gas-balance">0.00$</strong></p>
+        <p>الرتبة: <strong id="user-rank">FREE</strong></p>
+        <hr>
+        <button class="btn btn-radar" onclick="triggerAction('RADAR')">📡 تشغيل رادار الحيتان</button>
+        <button class="btn btn-recharge" onclick="triggerAction('RECHARGE')">💳 شحن الرصيد (Web3)</button>
+        <p id="system-status" style="margin-top: 15px; color: #7f8c8d; font-size: 0.9em;">الروبوت في وضع الاستعداد...</p>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
+
