@@ -1,7 +1,10 @@
 const API_URL = "https://Worker-production-179b.up.railway.app";
 let currentUserEmail = "";
+let currentWallet = null;
 
-// دالة تستقبل بيانات المستخدم من جوجل عند نجاح تسجيل الدخول
+// =========================================
+// 🔐 تسجيل الدخول والمصادقة
+// =========================================
 async function handleCredentialResponse(response) {
     const responsePayload = decodeJwtResponse(response.credential);
     currentUserEmail = responsePayload.email;
@@ -9,102 +12,14 @@ async function handleCredentialResponse(response) {
     document.getElementById("login-section").classList.add("hidden");
     document.getElementById("dashboard-section").classList.remove("hidden");
     document.getElementById("user-name").innerText = responsePayload.name;
-    document.getElementById("system-status").innerText = "جاري مزامنة البيانات مع قاعدة Neon...";
-
-    // إرسال الإيميل للسيرفر لإنشاء/جلب الحساب
-    await triggerAction("LOGIN");
-}
-
-// =========================================
-// 💰 دوال بوابة الدفع الآلية (تم الحقن هنا)
-// =========================================
-
-// دالة إظهار نافذة الدفع المخفية
-function showPaymentGateway() {
-    document.getElementById("payment-section").classList.remove("hidden");
-    document.getElementById("system-status").innerText = "بانتظار إتمام الدفع ووضع معرف المعاملة (TXID)...";
-    document.getElementById("system-status").style.color = "#e67e22";
-}
-
-// دالة إرسال الـ TXID للسيرفر للتحقق عبر TronGrid
-async function verifyPayment() {
-    // جلب القيمة من المربع وإزالة الفراغات
-    const txid = document.getElementById("txid-input").value.trim();
-    const statusText = document.getElementById("system-status");
     
-    // فحص مبدئي للتأكد من أن الـ TXID ليس فارغاً وطوله منطقي
-    if (txid.length < 30) {
-        alert("الرجاء إدخال معرف معاملة (TXID) صحيح!");
-        return;
-    }
-
-    statusText.innerText = "جاري فحص البلوكشين... الرجاء الانتظار ⏳";
-    statusText.style.color = "#2980b9";
-
-    try {
-        const res = await fetch(`${API_URL}/api/action`, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: currentUserEmail, action: "VERIFY_PAYMENT", txid: txid })
-        });
-        const data = await res.json();
-        
-        if(data.status === "success") {
-            statusText.innerText = data.message;
-            statusText.style.color = "#27ae60";
-            document.getElementById("payment-section").classList.add("hidden");
-            // تحديث الرصيد في الواجهة فور نجاح العملية
-            document.getElementById("gas-balance").innerText = "50.00$";
-        } else {
-            // في حال كان الـ TXID خاطئاً أو المبلغ ناقصاً
-            statusText.innerText = data.message;
-            statusText.style.color = "#c0392b";
-        }
-    } catch (error) {
-        statusText.innerText = "خطأ في الاتصال بشبكة التحقق السحابية.";
-        statusText.style.color = "#c0392b";
-    }
-}
-// =========================================
-
-// دالة تنفيذ الإجراءات والتواصل مع Railway
-async function triggerAction(actionType) {
-    // 🛑 اعتراض أمر الشحن لفتح البوابة بدلاً من إرساله فوراً
-    if (actionType === 'RECHARGE') {
-        showPaymentGateway();
-        return;
-    }
-
-    const statusText = document.getElementById("system-status");
-    statusText.innerText = "جاري الاتصال بالمحرك السحابي...";
-    statusText.style.color = "#7f8c8d";
-
-    try {
-        const res = await fetch(`${API_URL}/api/action`, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: currentUserEmail, action: actionType })
-        });
-        const data = await res.json();
-        
-        if(data.status === "success") {
-            statusText.innerText = data.message;
-            statusText.style.color = "#27ae60";
-            if(data.balance !== undefined) document.getElementById("gas-balance").innerText = data.balance + "$";
-            if(data.rank !== undefined) document.getElementById("user-rank").innerText = data.rank;
-        } else {
-            statusText.innerText = data.message || "حدث خطأ غير معروف.";
-            statusText.style.color = "#c0392b";
-        }
-    } catch (error) {
-        statusText.innerText = "خطأ في الاتصال بسيرفر Railway.";
-        statusText.style.color = "#c0392b";
-    }
+    updateStatus("جاري مزامنة بياناتك مع المحرك المركزي...", "#94a3b8");
+    await triggerAction("LOGIN");
+    
+    // تحميل شاشة السوق لتبقى جاهزة
+    loadTradingView();
 }
 
-// دالة مساعدة لفك تشفير بيانات جوجل
 function decodeJwtResponse(token) {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -114,3 +29,160 @@ function decodeJwtResponse(token) {
     return JSON.parse(jsonPayload);
 }
 
+// =========================================
+// 🎛️ التحكم بالواجهة والتبويبات
+// =========================================
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.remove('hidden');
+    event.target.classList.add('active');
+}
+
+function toggleSetup(type) {
+    document.getElementById("cex-setup").classList.add("hidden");
+    document.getElementById("dex-setup").classList.add("hidden");
+    document.getElementById(`${type}-setup`).classList.remove("hidden");
+}
+
+function updateStatus(msg, color) {
+    const statusText = document.getElementById("system-status");
+    statusText.innerText = msg;
+    statusText.style.color = color;
+}
+
+// =========================================
+// 🚀 إعدادات التداول (API & Web3)
+// =========================================
+async function saveTradingConfig() {
+    const apiKey = document.getElementById("api-key").value.trim();
+    const apiSecret = document.getElementById("api-secret").value.trim();
+    const riskLevel = document.getElementById("risk-level").value;
+
+    if(!apiKey || !apiSecret) {
+        alert("الرجاء إدخال المفاتيح كاملة لربط المنصة المركزية."); 
+        return;
+    }
+
+    updateStatus("جاري تشفير وإرسال المفاتيح لغرفة العمليات...", "#f59e0b");
+
+    try {
+        const res = await fetch(`${API_URL}/api/save_keys`, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                email: currentUserEmail, 
+                api_key: apiKey, 
+                api_secret: apiSecret,
+                risk: riskLevel
+            })
+        });
+        const data = await res.json();
+        
+        if(data.status === "success") {
+            updateStatus("✅ تم تفعيل الروبوت والتشفير بنجاح!", "#10b981");
+            document.getElementById("api-key").value = "";
+            document.getElementById("api-secret").value = "";
+        } else {
+            updateStatus(data.message || "حدث خطأ أثناء الربط.", "#ef4444");
+        }
+    } catch (error) {
+        updateStatus("فشل الاتصال بسيرفر التنفيذ المركزي.", "#ef4444");
+    }
+}
+
+async function connectMetaMask() {
+    if (typeof window.ethereum !== 'undefined') {
+        try {
+            updateStatus("جاري طلب الاتصال بمحفظة Web3...", "#8b5cf6");
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            currentWallet = accounts[0];
+            
+            document.getElementById("wallet-address").innerText = `${currentWallet.substring(0, 6)}...${currentWallet.substring(38)}`;
+            toggleSetup('dex');
+            updateStatus("تم ربط المحفظة اللامركزية بنجاح.", "#10b981");
+            
+        } catch (error) {
+            updateStatus("تم رفض الاتصال بالمحفظة من قبل المستخدم.", "#ef4444");
+        }
+    } else {
+        alert("الرجاء تثبيت إضافة محفظة (مثل MetaMask) أولاً!");
+    }
+}
+
+function activateDEXTraiding() {
+    if(!currentWallet) return;
+    updateStatus("تم تجهيز العقد الذكي للتداول. بانتظار إشارات الحيتان...", "#10b981");
+}
+
+// =========================================
+// 💳 نظام الفحص الآلي للمدفوعات (الجديد)
+// =========================================
+async function verifyPaymentAuto() {
+    const btn = document.getElementById("verify-btn");
+    
+    btn.disabled = true;
+    btn.innerText = "⏳ جاري مسح شبكة TRC20...";
+    updateStatus("رادار المدفوعات يبحث عن تحويلك في البلوكتشين...", "#3b82f6");
+
+    try {
+        const res = await fetch(`${API_URL}/api/verify_auto`, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: currentUserEmail })
+        });
+        const data = await res.json();
+        
+        if(data.status === "success") {
+            updateStatus("✅ تم التقاط الدفعة! تم شحن الغاز بنجاح.", "#10b981");
+            document.getElementById("gas-balance").innerText = data.new_balance + "$";
+            btn.innerText = "✔️ اكتمل الشحن";
+        } else if (data.status === "pending") {
+            updateStatus("⚠️ لم يتم رصد الدفعة بعد. الشبكة قد تستغرق دقائق، حاول الفحص مجدداً.", "#f59e0b");
+            btn.disabled = false;
+            btn.innerText = "🔄 فحص الشبكة مرة أخرى";
+        } else {
+            updateStatus(data.message || "حدث خطأ غير معروف.", "#ef4444");
+            btn.disabled = false;
+            btn.innerText = "🔄 إعادة الفحص";
+        }
+    } catch (error) {
+        updateStatus("خطأ في الاتصال بمحرك التحقق السحابي.", "#ef4444");
+        btn.disabled = false;
+        btn.innerText = "🔄 إعادة الفحص";
+    }
+}
+
+// =========================================
+// 📡 الاتصال العام (جلب الرصيد والرتبة)
+// =========================================
+async function triggerAction(actionType) {
+    try {
+        const res = await fetch(`${API_URL}/api/action`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: currentUserEmail, action: actionType })
+        });
+        const data = await res.json();
+        if(data.status === "success") {
+            if(data.balance !== undefined) document.getElementById("gas-balance").innerText = data.balance + "$";
+            if(data.rank !== undefined) document.getElementById("user-rank").innerText = data.rank;
+        }
+    } catch (error) {
+        console.error("Connection Error:", error);
+    }
+}
+
+// =========================================
+// 📊 شاشة السوق العالمية (TradingView)
+// =========================================
+function loadTradingView() {
+    const container = document.getElementById("tv-widget");
+    container.innerHTML = `
+        <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_widget&symbol=BINANCE%3ABTCUSDT&interval=15&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=0f172a&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=ar&utm_source=&utm_medium=widget&utm_campaign=chart&utm_term=BINANCE%3ABTCUSDT" 
+        width="100%" height="100%" frameborder="0" allowtransparency="true" scrolling="no" allowfullscreen></iframe>
+    `;
+}
